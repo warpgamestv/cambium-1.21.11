@@ -1,10 +1,7 @@
 package com.warpgames.cambium.registry;
 
 import com.warpgames.cambium.Cambium; // Import your main class
-import com.warpgames.cambium.block.IronFruitBlock;
-import com.warpgames.cambium.block.LivingLeavesBlock;
-import com.warpgames.cambium.block.LivingLogBlock;
-import com.warpgames.cambium.block.RootBlock;
+import com.warpgames.cambium.block.*;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -66,6 +63,15 @@ public class ModBlocks {
                     .strength(0.5f) // Easy to break
                     .sound(SoundType.GLASS) // Sounds "tinkly" like metal
                     .noOcclusion())); // Allow transparency
+
+    public static final ResourceKey<Block> MINERAL_SOIL_KEY = ResourceKey.create(
+            Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "mineral_soil"));
+
+    public static final Block MINERAL_SOIL = registerBlock("mineral_soil",
+            new MineralSoilBlock(BlockBehaviour.Properties.of()
+                    .setId(MINERAL_SOIL_KEY)
+                    .strength(1.0f)));
+
 
     // Helper method to register the Item
     private static void registerBlockItem(String name, Block block) {

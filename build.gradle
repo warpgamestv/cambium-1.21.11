@@ -82,3 +82,12 @@ publishing {
 		// retrieving dependencies.
 	}
 }
+sourceSets {
+	main {
+		resources {
+			srcDirs += [
+					'src/main/generated'
+			]
+		}
+	}
+}
