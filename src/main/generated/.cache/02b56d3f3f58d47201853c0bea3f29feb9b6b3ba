@@ -1,0 +1,11 @@
+// 1.21.11	-999999999-01-01T00:00:00	Cambium/Model Definitions
+56105af5f92a94bf2b79d606ec47acd53b59cde6 assets/cambium/blockstates/living_leaves.json
+c0bdeabb917bbd4fa78d71381ef0d134b7a06789 assets/cambium/blockstates/living_log.json
+dd142fbcb8e6f8efbad98cd39c671cd678e84231 assets/cambium/blockstates/root_block.json
+699ba974b3bb2d2409adb887d87fe0719a4c3a7c assets/cambium/items/living_leaves.json
+8101f8a38373bc4bd139e570b93aefd6d7e16452 assets/cambium/items/living_log.json
+6a993230ee0ade5f5e855a680fd4c961f6f78fe5 assets/cambium/items/root_block.json
+ae845aec4fc552f53c8effb7bce01614800116f7 assets/cambium/models/block/living_leaves.json
+ee229c0f23e5cf4e04e43da6f952d4eccd191466 assets/cambium/models/block/living_log.json
+b6642886a38cbd9780e1769afa1e4cad53159b57 assets/cambium/models/block/living_log_horizontal.json
+9822e405264d3e96dfd70529c5d8c6f1ccab85b1 assets/cambium/models/block/root_block.json
