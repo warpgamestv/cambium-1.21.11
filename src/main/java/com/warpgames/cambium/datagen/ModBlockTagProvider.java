@@ -18,7 +18,7 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void addTags(HolderLookup.Provider wrapperLookup) {
         // 1. Register Logs
         // This stops the leaves from decaying when touching them
-        valueLookupBuilder(BlockTags.LOGS_THAT_BURN)
+        valueLookupBuilder(BlockTags.LOGS)
                 .add(ModBlocks.LIVING_LOG)
         // Add stripped versions or wood blocks here if you have them:
         // .add(ModBlocks.STRIPPED_LIVING_LOG)

@@ -1,5 +1,6 @@
 package com.warpgames.cambium.block;
 
+import com.warpgames.cambium.content.ResourceTree;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
@@ -16,17 +17,16 @@ import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
-public class IronFruitBlock extends Block {
+public class ResourceFruitBlock extends Block {
 
-    // 0 = Baby, 1 = Growing, 2 = Mature (Ready to fall)
     public static final IntegerProperty AGE = IntegerProperty.create("age", 0, 2);
-
-    // Shapes for different stages (Optional: You can make them grow in size)
     private static final VoxelShape SHAPE = Block.box(4, 8, 4, 12, 16, 12);
 
-    public IronFruitBlock(Properties properties) {
+    private final ResourceTree tree;
+
+    public ResourceFruitBlock(ResourceTree tree, Properties properties) {
         super(properties);
-        // Set default state to Age 0
+        this.tree = tree; // Save it
         this.registerDefaultState(this.stateDefinition.any().setValue(AGE, 0));
     }
 
@@ -65,9 +65,11 @@ public class IronFruitBlock extends Block {
         // 1. Remove the block
         level.removeBlock(pos, false);
 
-        // 2. Spawn the Item (Simulating it falling)
-        // For now, we use Raw Iron. Later, this will be your custom item.
-        popResource(level, pos, new ItemStack(Items.RAW_IRON));
+        // 2. Spawn the Item DYNAMICALLY
+        // tree.getItem() should return Items.RAW_GOLD, Items.DIAMOND, etc.
+        if (this.tree.getItem() != null) {
+            popResource(level, pos, new ItemStack(this.tree.getItem()));
+        }
 
         // 3. Play a sound
         level.levelEvent(2001, pos, Block.getId(this.defaultBlockState()));

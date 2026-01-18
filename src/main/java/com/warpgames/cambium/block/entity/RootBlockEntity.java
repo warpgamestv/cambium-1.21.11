@@ -1,15 +1,14 @@
 package com.warpgames.cambium.block.entity;
 
-import com.warpgames.cambium.block.IronFruitBlock;
+import com.warpgames.cambium.block.ResourceFruitBlock;
 import com.warpgames.cambium.registry.ModBlockEntities;
 import com.warpgames.cambium.registry.ModBlocks;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.core.HolderLookup;
 import net.minecraft.core.Vec3i;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel; // Important for dropping fruit
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -97,7 +96,7 @@ public class RootBlockEntity extends BlockEntity {
         // 3. Fruit (Hanging under the tip)
         if (random.nextBoolean()) {
             Vec3i fruitPos = new Vec3i(tipPos.getX(), tipPos.getY() - 1, tipPos.getZ());
-            addStep(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(IronFruitBlock.AGE, 0));
+            addStep(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(ResourceFruitBlock.AGE, 0));
         }
     }
 
@@ -123,8 +122,26 @@ public class RootBlockEntity extends BlockEntity {
 
         // 1. Generate the plan ONCE
         if (!entity.isPlanGenerated) {
-            entity.generateTree();
-            entity.isPlanGenerated = true;
+
+            // Step A: Look at the block BELOW the root
+            BlockEntity belowBE = level.getBlockEntity(pos.below());
+
+            // Step B: Is it our Mineral Soil?
+            if (belowBE instanceof MineralSoilBlockEntity soil) {
+
+                // Step C: Does it contain Raw Iron?
+                if (soil.getItem(0).is(Items.RAW_IRON)) {
+
+                    // SUCCESS: We have the right ingredients. Grow the tree!
+                    entity.generateTree();
+                    entity.isPlanGenerated = true;
+                    entity.setChanged(); // Save that we generated
+                }
+            }
+
+            // If the check fails (no soil, or wrong item), we just return and wait for the next tick.
+            // This lets the player place the iron later and have the tree react.
+            return;
         }
 
         // 2. PRODUCTION MODE (Tree is fully grown)
@@ -145,22 +162,22 @@ public class RootBlockEntity extends BlockEntity {
                         if (level.isEmptyBlock(fruitPos)) {
                             // 10% chance to regrow
                             if (level.random.nextInt(10) == 0) {
-                                level.setBlock(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(IronFruitBlock.AGE, 0), 3);
+                                level.setBlock(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
                                 level.levelEvent(2005, fruitPos, 0); // Bone meal effect
                             }
                         }
                         // CASE B: Existing Fruit? Ripen it
                         else if (currentBlock.is(ModBlocks.IRON_FRUIT)) {
-                            int age = currentBlock.getValue(IronFruitBlock.AGE);
+                            int age = currentBlock.getValue(ResourceFruitBlock.AGE);
 
                             // 10% chance to age up
                             if (level.random.nextInt(10) == 0) {
                                 if (age < 2) {
-                                    level.setBlock(fruitPos, currentBlock.setValue(IronFruitBlock.AGE, age + 1), 3);
+                                    level.setBlock(fruitPos, currentBlock.setValue(ResourceFruitBlock.AGE, age + 1), 3);
                                 } else {
                                     // Age 2 = Ripe -> Drop it!
                                     if (level instanceof ServerLevel serverLevel) {
-                                        ((IronFruitBlock) ModBlocks.IRON_FRUIT).dropFruit(serverLevel, fruitPos);
+                                        ((ResourceFruitBlock) ModBlocks.IRON_FRUIT).dropFruit(serverLevel, fruitPos);
                                     }
                                 }
                             }
@@ -176,6 +193,11 @@ public class RootBlockEntity extends BlockEntity {
         entity.timer++;
         if (entity.timer >= 5) { // Fast growth (0.25s)
 
+            if (!entity.hasValidSoil(level, pos)) {
+                entity.timer = 0;
+                return;
+            }
+
             BuildStep step = entity.buildPlan.get(entity.growthIndex);
             BlockPos targetPos = pos.offset(step.offset());
 
@@ -183,6 +205,9 @@ public class RootBlockEntity extends BlockEntity {
                 level.setBlock(targetPos, step.state(), 3);
                 // Play sound
                 level.levelEvent(2001, targetPos, net.minecraft.world.level.block.Block.getId(step.state()));
+                if (step.state().getBlock() instanceof LeavesBlock) {
+                    level.scheduleTick(targetPos, step.state().getBlock(), 1);
+                }
             }
 
             entity.growthIndex++;
@@ -190,7 +215,12 @@ public class RootBlockEntity extends BlockEntity {
         }
     }
     private boolean isGrown = false;
-
+    private boolean hasValidSoil(Level level, BlockPos rootPos) {
+        if (level.getBlockEntity(rootPos.below()) instanceof MineralSoilBlockEntity soil) {
+            return soil.getItem(0).is(Items.RAW_IRON);
+        }
+        return false;
+    }
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
