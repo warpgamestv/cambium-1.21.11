@@ -1,0 +1,14 @@
+{
+  "type": "cambium:solar_digesting",
+  "byproduct": {
+    "count": 2,
+    "id": "minecraft:stick"
+  },
+  "chance": 0.5,
+  "experience": 0.5,
+  "ingredient": "minecraft:oak_log",
+  "result": {
+    "count": 1,
+    "id": "minecraft:charcoal"
+  }
+}

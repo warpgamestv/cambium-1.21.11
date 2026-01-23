@@ -1,5 +1,6 @@
 package com.warpgames.cambium;
 
+import com.warpgames.cambium.recipe.ModRecipes;
 import com.warpgames.cambium.registry.ModBlockEntities;
 import com.warpgames.cambium.registry.ModBlocks;
 import com.warpgames.cambium.registry.ModScreenHandlers;
@@ -21,6 +22,7 @@ public class Cambium implements ModInitializer {
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
 		ModScreenHandlers.registerScreenHandlers();
+		ModRecipes.registerRecipes();
 
 		LOGGER.info("Hello Fabric world!");
 	}
