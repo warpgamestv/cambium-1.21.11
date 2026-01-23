@@ -1,3 +1,6 @@
 // 1.21.11	-999999999-01-01T00:00:00	Cambium/Tags for minecraft:block
-b520e81646c0027cc2f190185b9b99ea165fa6e5 data/minecraft/tags/block/leaves.json
-72d5919c9cb9ffc4ce6a36477a85c3d5fed13271 data/minecraft/tags/block/logs.json
+b2a1b1ef23d4912faafeca4fd0666db063aa4dcb data/minecraft/tags/block/leaves.json
+acdd3733e53e5c6c4b5b3c71b47413bab3ec124f data/minecraft/tags/block/logs.json
+acdd3733e53e5c6c4b5b3c71b47413bab3ec124f data/minecraft/tags/block/mineable/axe.json
+b2a1b1ef23d4912faafeca4fd0666db063aa4dcb data/minecraft/tags/block/mineable/hoe.json
+79697c5bbdc723338c6da027c653057456b63f08 data/minecraft/tags/block/mineable/pickaxe.json

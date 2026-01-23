@@ -1,6 +1,8 @@
 package com.warpgames.cambium.datagen;
 
+import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlocks;
+import com.warpgames.cambium.registry.TreeRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -16,18 +18,33 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider wrapperLookup) {
-        // 1. Register Logs
-        // This stops the leaves from decaying when touching them
+        // NOTE: In your version of Fabric, the method to get a builder
+        // that accepts BLOCKS (not Keys) is 'getOrCreateTagBuilder' or 'tag'.
+        // However, your source code shows 'valueLookupBuilder' is the special Fabric one.
+        // Let's try the standard 'getOrCreateTagBuilder' which comes from the Minecraft parent class.
+
+        // 1. Logs
         valueLookupBuilder(BlockTags.LOGS)
                 .add(ModBlocks.LIVING_LOG)
-        // Add stripped versions or wood blocks here if you have them:
-        // .add(ModBlocks.STRIPPED_LIVING_LOG)
-        // .add(ModBlocks.LIVING_WOOD)
-        ;
+                .add(ModBlocks.ROOT_BLOCK);
 
-        // 2. Register Leaves
-        // This makes them behave like foliage (transparent, decayable)
-        valueLookupBuilder(BlockTags.LEAVES)
-                .add(ModBlocks.LIVING_LEAVES);
+        valueLookupBuilder(BlockTags.MINEABLE_WITH_AXE)
+                .add(ModBlocks.LIVING_LOG)
+                .add(ModBlocks.ROOT_BLOCK);
+
+        // 2. Soil
+        valueLookupBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
+                .add(ModBlocks.MINERAL_SOIL);
+
+        // 3. Leaves
+        var leavesTag = valueLookupBuilder(BlockTags.LEAVES);
+        var hoeTag = valueLookupBuilder(BlockTags.MINEABLE_WITH_HOE);
+
+        for (ResourceTree tree : TreeRegistry.TREES) {
+            if (tree.getLeaves() != null) {
+                leavesTag.add(tree.getLeaves());
+                hoeTag.add(tree.getLeaves());
+            }
+        }
     }
 }

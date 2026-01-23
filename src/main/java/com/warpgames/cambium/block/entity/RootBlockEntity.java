@@ -1,14 +1,16 @@
 package com.warpgames.cambium.block.entity;
 
+import com.mojang.serialization.Codec;
 import com.warpgames.cambium.block.ResourceFruitBlock;
+import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlockEntities;
 import com.warpgames.cambium.registry.ModBlocks;
+import com.warpgames.cambium.registry.TreeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
-import net.minecraft.server.level.ServerLevel; // Important for dropping fruit
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -23,8 +25,8 @@ public class RootBlockEntity extends BlockEntity {
 
     private int timer = 0;
     private int growthIndex = 0;
+    private String treeType = "";
 
-    // This list stores the unique shape of this specific tree
     private final List<BuildStep> buildPlan = new ArrayList<>();
     private boolean isPlanGenerated = false;
 
@@ -32,152 +34,136 @@ public class RootBlockEntity extends BlockEntity {
         super(ModBlockEntities.ROOT_BE, pos, state);
     }
 
-    // --- THE GENERATOR (3D Logic) ---
+    // --- GETTERS & SETTERS ---
+    public void setTreeType(String name) {
+        this.treeType = name;
+        setChanged();
+    }
+
+    public String getTreeType() {
+        return this.treeType;
+    }
+
+    private ResourceTree getTree() {
+        return TreeRegistry.TREES.stream()
+                .filter(t -> t.getName().equals(this.treeType))
+                .findFirst()
+                .orElse(TreeRegistry.IRON);
+    }
+
+    // --- SOIL CHECK (Restored!) ---
+    private boolean hasValidSoil(Level level, BlockPos pos) {
+        BlockPos soilPos = pos.below();
+        BlockState soilState = level.getBlockState(soilPos);
+        return soilState.is(ModBlocks.MINERAL_SOIL);
+    }
+
+    // --- THE GENERATOR ---
     private void generateTree() {
         long seed = this.worldPosition.asLong();
         RandomSource random = RandomSource.create(seed);
 
-        // 10% chance to be a "Runt"
-        boolean isRunt = random.nextInt(10) == 0;
+        ResourceTree treeDef = getTree();
+        BlockState logState = ModBlocks.LIVING_LOG.defaultBlockState();
+        BlockState leafState = treeDef.getLeaves().defaultBlockState();
+        BlockState fruitState = treeDef.getFruit().defaultBlockState().setValue(ResourceFruitBlock.AGE, 0);
 
-        // Determine Height (Let's make them slightly taller to compensate for the gaps)
-        // Old: 4 to 6. New: 6 to 9.
+        boolean isRunt = random.nextInt(10) == 0;
         int height = isRunt ? (random.nextInt(2) + 4) : (random.nextInt(4) + 6);
 
-        // Build Trunk
         for (int y = 1; y <= height; y++) {
-            addStep(new Vec3i(0, y, 0), ModBlocks.LIVING_LOG.defaultBlockState());
+            addStep(new Vec3i(0, y, 0), logState);
 
-            // --- THE FIX ---
-            // 1. Must be above Y=2
-            // 2. Must not be the very top (height)
-            // 3. (y % 2 != 0) -> Only branch on ODD numbers (3, 5, 7...)
             if (y > 2 && y < height && (y % 2 != 0)) {
-
                 if (isRunt) {
                     if (random.nextInt(10) < 4) {
                         Direction dir = Direction.Plane.HORIZONTAL.getRandomDirection(random);
-                        generate3DBranch(y, dir, random);
+                        generate3DBranch(y, dir, random, logState, leafState, fruitState);
                     }
                 } else {
                     for (Direction dir : Direction.Plane.HORIZONTAL) {
-                        // slightly higher chance (60%) since we have fewer layers now
                         if (random.nextInt(10) < 6) {
-                            generate3DBranch(y, dir, random);
+                            generate3DBranch(y, dir, random, logState, leafState, fruitState);
                         }
                     }
                 }
             }
         }
 
-        // Top Crown
-        generateLeafCluster(new Vec3i(0, height + 1, 0));
+        generateLeafCluster(new Vec3i(0, height + 1, 0), leafState);
         if (!isRunt) {
-            addStep(new Vec3i(0, height + 2, 0), persistentLeaves());
+            addStep(new Vec3i(0, height + 2, 0), leafState);
         }
     }
 
-    private void generate3DBranch(int y, Direction dir, RandomSource random) {
-        Vec3i dirVec = dir.getUnitVec3i(); // Use getUnitVec3i or getVector based on mappings
-
+    private void generate3DBranch(int y, Direction dir, RandomSource random, BlockState logState, BlockState leafState, BlockState fruitState) {
+        Vec3i dirVec = dir.getUnitVec3i();
         Vec3i branchPos = new Vec3i(dirVec.getX(), y, dirVec.getZ());
-
-        // Determine rotation: If growing North/South, use Z axis. If East/West, use X axis.
         Direction.Axis axis = dir.getAxis();
-        BlockState logState = ModBlocks.LIVING_LOG.defaultBlockState()
-                .setValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS, axis);
+        BlockState rotatedLog = logState.setValue(net.minecraft.world.level.block.RotatedPillarBlock.AXIS, axis);
+        addStep(branchPos, rotatedLog);
 
-        addStep(branchPos, logState);
-
-        // 2. Branch Tip (Leaves)
         Vec3i tipPos = new Vec3i(dirVec.getX() * 2, y, dirVec.getZ() * 2);
-        generateLeafCluster(tipPos);
+        generateLeafCluster(tipPos, leafState);
 
-        // 3. Fruit (Hanging under the tip)
         if (random.nextBoolean()) {
             Vec3i fruitPos = new Vec3i(tipPos.getX(), tipPos.getY() - 1, tipPos.getZ());
-            addStep(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(ResourceFruitBlock.AGE, 0));
+            addStep(fruitPos, fruitState);
         }
     }
 
-    private void generateLeafCluster(Vec3i center) {
-        addStep(center, persistentLeaves());
-        addStep(new Vec3i(center.getX() + 1, center.getY(), center.getZ()), persistentLeaves());
-        addStep(new Vec3i(center.getX() - 1, center.getY(), center.getZ()), persistentLeaves());
-        addStep(new Vec3i(center.getX(), center.getY(), center.getZ() + 1), persistentLeaves());
-        addStep(new Vec3i(center.getX(), center.getY(), center.getZ() - 1), persistentLeaves());
+    private void generateLeafCluster(Vec3i center, BlockState leafState) {
+        addStep(center, leafState);
+        addStep(new Vec3i(center.getX() + 1, center.getY(), center.getZ()), leafState);
+        addStep(new Vec3i(center.getX() - 1, center.getY(), center.getZ()), leafState);
+        addStep(new Vec3i(center.getX(), center.getY(), center.getZ() + 1), leafState);
+        addStep(new Vec3i(center.getX(), center.getY(), center.getZ() - 1), leafState);
     }
 
     private void addStep(Vec3i offset, BlockState state) {
         buildPlan.add(new BuildStep(offset, state));
     }
 
-    private BlockState persistentLeaves() {
-        return ModBlocks.LIVING_LEAVES.defaultBlockState();
-    }
-
-    // --- THE TICKER (Growth & Production) ---
+    // --- THE TICKER ---
     public static void tick(Level level, BlockPos pos, BlockState state, RootBlockEntity entity) {
         if (level.isClientSide()) return;
 
-        // 1. Generate the plan ONCE
+        // 1. GENERATION PHASE
         if (!entity.isPlanGenerated) {
-
-            // Step A: Look at the block BELOW the root
-            BlockEntity belowBE = level.getBlockEntity(pos.below());
-
-            // Step B: Is it our Mineral Soil?
-            if (belowBE instanceof MineralSoilBlockEntity soil) {
-
-                // Step C: Does it contain Raw Iron?
-                if (soil.getItem(0).is(Items.RAW_IRON)) {
-
-                    // SUCCESS: We have the right ingredients. Grow the tree!
-                    entity.generateTree();
-                    entity.isPlanGenerated = true;
-                    entity.setChanged(); // Save that we generated
-                }
+            // RESTORED CHECK: Only generate if sitting on Mineral Soil
+            if (entity.hasValidSoil(level, pos)) {
+                entity.generateTree();
+                entity.isPlanGenerated = true;
+                entity.setChanged();
             }
-
-            // If the check fails (no soil, or wrong item), we just return and wait for the next tick.
-            // This lets the player place the iron later and have the tree react.
             return;
         }
 
-        // 2. PRODUCTION MODE (Tree is fully grown)
+        // 2. PRODUCTION PHASE (Once fully grown)
         if (entity.growthIndex >= entity.buildPlan.size()) {
+            // OPTIONAL: You could add a check here too if you want the tree to DIE if soil is broken
+            // if (!entity.hasValidSoil(level, pos)) return;
+
             entity.timer++;
-
-            // Check every 1 second (20 ticks) for ripening
             if (entity.timer >= 20) {
-
-                // Loop through the plan to find Fruit Nodes
+                ResourceTree treeDef = entity.getTree();
                 for (BuildStep step : entity.buildPlan) {
-                    if (step.state().is(ModBlocks.IRON_FRUIT)) {
-
+                    if (step.state().getBlock() == treeDef.getFruit()) {
                         BlockPos fruitPos = pos.offset(step.offset());
                         BlockState currentBlock = level.getBlockState(fruitPos);
-
-                        // CASE A: Empty? Grow a new baby fruit
                         if (level.isEmptyBlock(fruitPos)) {
-                            // 10% chance to regrow
                             if (level.random.nextInt(10) == 0) {
-                                level.setBlock(fruitPos, ModBlocks.IRON_FRUIT.defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
-                                level.levelEvent(2005, fruitPos, 0); // Bone meal effect
+                                level.setBlock(fruitPos, treeDef.getFruit().defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
+                                level.levelEvent(2005, fruitPos, 0);
                             }
-                        }
-                        // CASE B: Existing Fruit? Ripen it
-                        else if (currentBlock.is(ModBlocks.IRON_FRUIT)) {
+                        } else if (currentBlock.getBlock() == treeDef.getFruit()) {
                             int age = currentBlock.getValue(ResourceFruitBlock.AGE);
-
-                            // 10% chance to age up
                             if (level.random.nextInt(10) == 0) {
                                 if (age < 2) {
                                     level.setBlock(fruitPos, currentBlock.setValue(ResourceFruitBlock.AGE, age + 1), 3);
                                 } else {
-                                    // Age 2 = Ripe -> Drop it!
-                                    if (level instanceof ServerLevel serverLevel) {
-                                        ((ResourceFruitBlock) ModBlocks.IRON_FRUIT).dropFruit(serverLevel, fruitPos);
+                                    if (level instanceof ServerLevel serverLevel && currentBlock.getBlock() instanceof ResourceFruitBlock rfb) {
+                                        rfb.dropFruit(serverLevel, fruitPos);
                                     }
                                 }
                             }
@@ -189,52 +175,39 @@ public class RootBlockEntity extends BlockEntity {
             return;
         }
 
-        // 3. GROWTH MODE (Building the tree)
+        // 3. GROWTH ANIMATION PHASE
         entity.timer++;
-        if (entity.timer >= 5) { // Fast growth (0.25s)
-
-            if (!entity.hasValidSoil(level, pos)) {
-                entity.timer = 0;
-                return;
-            }
-
+        if (entity.timer >= 5) {
             BuildStep step = entity.buildPlan.get(entity.growthIndex);
             BlockPos targetPos = pos.offset(step.offset());
-
             if (level.isEmptyBlock(targetPos)) {
                 level.setBlock(targetPos, step.state(), 3);
-                // Play sound
                 level.levelEvent(2001, targetPos, net.minecraft.world.level.block.Block.getId(step.state()));
                 if (step.state().getBlock() instanceof LeavesBlock) {
                     level.scheduleTick(targetPos, step.state().getBlock(), 1);
                 }
             }
-
             entity.growthIndex++;
             entity.timer = 0;
         }
     }
-    private boolean isGrown = false;
-    private boolean hasValidSoil(Level level, BlockPos rootPos) {
-        if (level.getBlockEntity(rootPos.below()) instanceof MineralSoilBlockEntity soil) {
-            return soil.getItem(0).is(Items.RAW_IRON);
-        }
-        return false;
-    }
+
+    // --- SAVING & LOADING ---
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        output.putBoolean("IsGrown", this.isGrown);
-        output.putInt("GrowthIndex", this.growthIndex);
+        output.store("TreeType", Codec.STRING, this.treeType);
+        output.store("GrowthIndex", Codec.INT, this.growthIndex);
+        output.store("IsPlanGenerated", Codec.BOOL, this.isPlanGenerated);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        this.isGrown = input.getBooleanOr("IsGrown", false);
-        this.growthIndex = input.getIntOr("GrowthIndex", 0);
+        this.treeType = input.read("TreeType", Codec.STRING).orElse("");
+        this.growthIndex = input.read("GrowthIndex", Codec.INT).orElse(0);
+        this.isPlanGenerated = input.read("IsPlanGenerated", Codec.BOOL).orElse(false);
     }
 
-// Record helper
-record BuildStep(Vec3i offset, BlockState state){}
+    record BuildStep(Vec3i offset, BlockState state){}
 }

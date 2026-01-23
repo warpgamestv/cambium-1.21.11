@@ -4,6 +4,7 @@ import com.warpgames.cambium.content.ResourceTree;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items; // Placeholder for Raw Iron
 import net.minecraft.world.level.BlockGetter;
@@ -66,7 +67,7 @@ public class ResourceFruitBlock extends Block {
         level.removeBlock(pos, false);
 
         // 2. Spawn the Item DYNAMICALLY
-        // tree.getItem() should return Items.RAW_GOLD, Items.DIAMOND, etc.
+        // usage: tree.getItem() calls the method on the TREE object
         if (this.tree.getItem() != null) {
             popResource(level, pos, new ItemStack(this.tree.getItem()));
         }

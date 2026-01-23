@@ -1,61 +1,58 @@
 package com.warpgames.cambium.block.entity;
 
+import com.mojang.serialization.Codec;
 import com.warpgames.cambium.registry.ModBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.Container;
-import net.minecraft.world.ContainerHelper;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-// The Imports from BarrelBlockEntity
 import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
 
-public class MineralSoilBlockEntity extends BlockEntity implements Container {
+public class MineralSoilBlockEntity extends BlockEntity {
 
-    // Size 1, just like we need
-    private final NonNullList<ItemStack> inventory = NonNullList.withSize(1, ItemStack.EMPTY);
+    private int charge = 0;
+    public static final int MAX_CHARGE = 100;
 
     public MineralSoilBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.MINERAL_SOIL_BE, pos, state);
     }
 
-    // --- SAVE LOGIC (Matches BarrelBlockEntity) ---
+    // --- LOGIC: CALLED BY LEAVES ---
+    // Returns true if successful (charge was consumed)
+    public boolean tryConsumeCharge() {
+        if (this.charge > 0) {
+            this.charge--;
+            setChanged(); // Mark as dirty so it saves
+            return true;
+        }
+        return false;
+    }
+
+    // --- LOGIC: CALLED BY PLAYER ---
+    public boolean addCharge(int amount) {
+        if (this.charge < MAX_CHARGE) {
+            this.charge = Math.min(this.charge + amount, MAX_CHARGE);
+            setChanged();
+            return true;
+        }
+        return false;
+    }
+
+    // --- GETTER (Optional: For Debugging/Waila) ---
+    public int getCharge() {
+        return charge;
+    }
+
+    // --- SAVING & LOADING (NEW SYSTEM) ---
     @Override
     protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
-        // Barrel uses this exact line:
-        ContainerHelper.saveAllItems(output, this.inventory);
+        output.store("Charge", Codec.INT, this.charge);
     }
 
-    // --- LOAD LOGIC (Matches BarrelBlockEntity) ---
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-        // Barrel uses this exact line:
-        ContainerHelper.loadAllItems(input, this.inventory);
+        this.charge = input.read("Charge", Codec.INT).orElse(0);
     }
-
-    // --- CONTAINER METHODS ---
-    @Override
-    public int getContainerSize() { return inventory.size(); }
-    @Override
-    public boolean isEmpty() { for (ItemStack s : inventory) if (!s.isEmpty()) return true; return false; }
-    @Override
-    public ItemStack getItem(int slot) { return inventory.get(slot); }
-    @Override
-    public ItemStack removeItem(int slot, int amount) { return ContainerHelper.removeItem(inventory, slot, amount); }
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(inventory, slot); }
-    @Override
-    public void setItem(int slot, ItemStack stack) {
-        inventory.set(slot, stack);
-        setChanged(); // Required to trigger save
-    }
-    @Override
-    public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
-    @Override
-    public void clearContent() { inventory.clear(); }
 }

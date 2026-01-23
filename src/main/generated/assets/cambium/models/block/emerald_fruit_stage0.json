@@ -1,0 +1,6 @@
+{
+  "parent": "cambium:block/base_fruit_stage0",
+  "textures": {
+    "all": "minecraft:block/emerald_ore"
+  }
+}

@@ -15,20 +15,30 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
+// NEW IMPORTS FOR DATA COMPONENTS
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.world.item.component.DyedItemColor;
+
 public class ModBlocks {
 
-    // --- STATIC GENERIC BLOCKS (Safe/Untouched) ---
-
+    // --- STATIC GENERIC BLOCKS ---
     public static final ResourceKey<Block> ROOT_BLOCK_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "root_block"));
     public static final Block ROOT_BLOCK = registerBlock("root_block",
-            new RootBlock(BlockBehaviour.Properties.of()
+            new RootBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .setId(ROOT_BLOCK_KEY)));
 
+    public static final ResourceKey<Block> SOLAR_DIGESTER_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_digester"));
+    public static final Block SOLAR_DIGESTER = registerBlock("solar_digester",
+            new SolarDigesterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .setId(SOLAR_DIGESTER_KEY)));
+
     public static final ResourceKey<Block> LIVING_LOG_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "living_log"));
     public static final Block LIVING_LOG = registerBlock("living_log",
-            new LivingLogBlock(BlockBehaviour.Properties.of()
+            new LivingLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)
                     .setId(LIVING_LOG_KEY)
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
@@ -36,89 +46,83 @@ public class ModBlocks {
 
     public static final ResourceKey<Block> MINERAL_SOIL_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "mineral_soil"));
     public static final Block MINERAL_SOIL = registerBlock("mineral_soil",
-            new MineralSoilBlock(BlockBehaviour.Properties.of()
+            new MineralSoilBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
                     .setId(MINERAL_SOIL_KEY)
                     .strength(1.0f)));
 
-    // --- DYNAMIC BLOCKS (Populated by Loop) ---
-    // Not 'final' anymore because they are assigned in the loop
-    public static Block LIVING_LEAVES;
-    public static Block IRON_FRUIT;
-
     public static void registerModBlocks() {
         Cambium.LOGGER.info("Registering Mod Blocks for " + Cambium.MOD_ID);
-
-        // 1. Initialize Registry
         TreeRegistry.init();
 
-        // 2. Loop through every tree and create blocks
         for (ResourceTree tree : TreeRegistry.TREES) {
             registerTreeBlocks(tree);
         }
     }
 
     private static void registerTreeBlocks(ResourceTree tree) {
-        // PRESERVE LEGACY NAMES:
-        // If the tree is "iron", we keep the old IDs ("living_leaves", "iron_fruit")
-        // so we don't break your existing world.
-        boolean isLegacyIron = tree.getName().equals("iron");
-
-        String leavesName = isLegacyIron ? "living_leaves" : tree.getName() + "_leaves";
-        String fruitName = isLegacyIron ? "iron_fruit" : tree.getName() + "_fruit";
+        String leavesName = tree.getName() + "_leaves";
+        String fruitName = tree.getName() + "_fruit";
+        String saplingName = tree.getName() + "_sapling";
 
         ResourceKey<Block> leavesKey = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, leavesName));
         ResourceKey<Block> fruitKey = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, fruitName));
-        // 1. Register Leaves
-        // Note: In the future, you can pass tree.getColor() to the block if needed
-        Block leaves = registerBlock(leavesName,
-                new LivingLeavesBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
-                        .strength(0.2f)
-                        .sound(SoundType.GRASS)
-                        .noOcclusion()
-                        .setId(leavesKey)
-                        .ignitedByLava()));
+        ResourceKey<Block> saplingKey = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, saplingName));
 
-        // 2. Register Fruit
-        // Note: Currently using IronFruitBlock. For "Gold", we will need a GenericFruitBlock later.
-        Block fruit = registerBlock(fruitName,
-                new ResourceFruitBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.COCOA)
-                        .setId(fruitKey)
-                        .strength(0.5f)
-                        .sound(SoundType.GLASS)
-                        .noOcclusion()));
+        // 1. Create Blocks
+        Block leaves = new LivingLeavesBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LEAVES)
+                .setId(leavesKey).strength(0.2f).sound(SoundType.GRASS).noOcclusion().ignitedByLava());
 
-        // 3. Link blocks back to the Tree Definition
-        tree.setBlocks(MINERAL_SOIL,ROOT_BLOCK, leaves, fruit);
+        Block fruit = new ResourceFruitBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.COCOA)
+                .setId(fruitKey).strength(0.5f).sound(SoundType.GLASS).noOcclusion());
 
-        // 4. Assign to Static Fields (so other code doesn't crash)
-        if (isLegacyIron) {
-            LIVING_LEAVES = leaves;
-            IRON_FRUIT = fruit;
-        }
+        Block sapling = new ResourceSaplingBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
+                .setId(saplingKey).noOcclusion().sound(SoundType.GRASS));
+
+        // 2. Register Blocks & Items (WITH COLOR COMPONENT!)
+        // This is the change: We pass the color to the helper method.
+        registerBlockWithColor(leavesName, leaves, tree.getColor());
+
+        // You can do the same for fruit if you want colored fruit items
+        registerBlockWithColor(fruitName, fruit, tree.getColor());
+
+        // Saplings usually have unique textures, so we register them normally
+        registerBlock(saplingName, sapling);
+
+        // 3. Link to Tree Object
+        tree.setLog(LIVING_LOG);
+        tree.setLeaves(leaves);
+        tree.setFruit(fruit);
     }
 
     // --- HELPER METHODS ---
-    private static Block registerBlock(String name, Block block) {
-        registerBlockItem(name, block);
 
-        // Ensure ID is set on the block if not already (for the dynamic ones)
-        ResourceKey<Block> key = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name));
-        // We can't easily set the Key on an already created block without a mixin or constructor,
-        // but 'registry.register' handles the mapping.
-        // The properties .setId() call is mostly for datafixers/advanced stuff.
+    // NEW: Registers a block and automatically dyes its Item representation
+    private static Block registerBlockWithColor(String name, Block block, int color) {
+        Identifier id = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name);
 
-        return Registry.register(
-                BuiltInRegistries.BLOCK,
-                Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name),
-                block);
+        // 1. Register the Block
+        Registry.register(BuiltInRegistries.BLOCK, id, block);
+
+        // 2. Register the Item with DYED_COLOR component
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
+
+        Item.Properties props = new Item.Properties()
+                .setId(itemKey)
+                // This line makes the inventory item colored!
+                .component(DataComponents.DYED_COLOR, new DyedItemColor(color));
+
+        Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, props));
+
+        return block;
     }
 
-    private static void registerBlockItem(String name, Block block) {
-        ResourceKey<Item> itemKey = ResourceKey.create(
-                Registries.ITEM,
-                Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name)
-        );
-        Registry.register(BuiltInRegistries.ITEM, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name),
-                new BlockItem(block, new Item.Properties().setId(itemKey)));
+    // Standard Register (No Color)
+    private static Block registerBlock(String name, Block block) {
+        Identifier id = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name);
+        Registry.register(BuiltInRegistries.BLOCK, id, block);
+
+        ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
+        Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, new Item.Properties().setId(itemKey)));
+        return block;
     }
 }

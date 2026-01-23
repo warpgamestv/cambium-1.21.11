@@ -2,6 +2,7 @@ package com.warpgames.cambium;
 
 import com.warpgames.cambium.registry.ModBlockEntities;
 import com.warpgames.cambium.registry.ModBlocks;
+import com.warpgames.cambium.registry.ModScreenHandlers;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public class Cambium implements ModInitializer {
 	public void onInitialize() {
 		ModBlocks.registerModBlocks();
 		ModBlockEntities.registerBlockEntities();
+		ModScreenHandlers.registerScreenHandlers();
 
 		LOGGER.info("Hello Fabric world!");
 	}

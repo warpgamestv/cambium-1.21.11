@@ -18,6 +18,9 @@
 		"main": [
 			"com.warpgames.cambium.Cambium"
 		],
+		"client": [
+			"com.warpgames.cambium.CambiumClient"
+		],
 		"fabric-datagen": [
 			"com.warpgames.cambium.CambiumDataGenerator"
 		]

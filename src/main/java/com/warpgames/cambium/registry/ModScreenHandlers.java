@@ -1,0 +1,28 @@
+package com.warpgames.cambium.registry;
+
+import com.warpgames.cambium.Cambium;
+import com.warpgames.cambium.menu.SolarDigesterMenu;
+import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
+import net.minecraft.core.BlockPos; // Import BlockPos
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
+import net.minecraft.world.inventory.MenuType;
+
+public class ModScreenHandlers {
+
+    // --- THE FIX ---
+    // We explicitly tell it: "This menu uses SolarDigesterMenu, and it expects a BlockPos data packet."
+    public static final MenuType<SolarDigesterMenu> SOLAR_DIGESTER_MENU = Registry.register(
+            BuiltInRegistries.MENU,
+            Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_digester_menu"),
+            new ExtendedScreenHandlerType<>(
+                    SolarDigesterMenu::new,
+                    BlockPos.STREAM_CODEC // This is required in 1.21 to handle the data!
+            )
+    );
+
+    public static void registerScreenHandlers() {
+        Cambium.LOGGER.info("Registering Screen Handlers for " + Cambium.MOD_ID);
+    }
+}
