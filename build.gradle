@@ -90,3 +90,7 @@ sourceSets {
 		}
 	}
 }
+sourcesJar {
+	exclude '.cache/**'
+	duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
