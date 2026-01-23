@@ -1,8 +1,6 @@
 package com.warpgames.cambium;
 
-import com.warpgames.cambium.datagen.ModBlockTagProvider;
-import com.warpgames.cambium.datagen.ModModelProvider;
-import com.warpgames.cambium.datagen.ModRecipeProvider;
+import com.warpgames.cambium.datagen.*;
 import net.fabricmc.fabric.api.datagen.v1.DataGeneratorEntrypoint;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataGenerator;
 
@@ -13,5 +11,7 @@ public class CambiumDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(ModModelProvider::new);
 		pack.addProvider(ModBlockTagProvider::new);
 		pack.addProvider(ModRecipeProvider::new);
+		pack.addProvider(ModEnLangProvider::new);
+		pack.addProvider(ModLootTableProvider::new);
 	}
 }
