@@ -60,7 +60,7 @@ public class SolarDigesterScreen extends AbstractContainerScreen<SolarDigesterMe
             graphics.blit(
                     RenderPipelines.GUI_TEXTURED, // 1. Pipeline
                     TEXTURE,                      // 2. Texture
-                    x + 79, y + 39,               // 3. Screen X, Y
+                    x + 79, y + 42,               // 3. Screen X, Y
                     176.0F, 14.0F,                // 4. Texture U, V (Start of white arrow)
                     arrowWidth, 17,               // 5. Width (Dynamic), Height (Fixed)
                     arrowWidth, 17,               // 6. Slice Width/Height (Same as above)

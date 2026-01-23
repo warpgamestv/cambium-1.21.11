@@ -96,33 +96,35 @@ public class ModBlocks {
 
     // --- HELPER METHODS ---
 
-    // NEW: Registers a block and automatically dyes its Item representation
     private static Block registerBlockWithColor(String name, Block block, int color) {
         Identifier id = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name);
-
-        // 1. Register the Block
-        Registry.register(BuiltInRegistries.BLOCK, id, block);
-
-        // 2. Register the Item with DYED_COLOR component
+        ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id);
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
 
+        // 1. Register Block
+        Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
+
+        // 2. Register Item with matching ID and Color Component
         Item.Properties props = new Item.Properties()
-                .setId(itemKey)
-                // This line makes the inventory item colored!
+                .setId(itemKey) // This MUST match the block's path
                 .component(DataComponents.DYED_COLOR, new DyedItemColor(color));
 
-        Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, props));
+        Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, props));
 
         return block;
     }
 
-    // Standard Register (No Color)
     private static Block registerBlock(String name, Block block) {
         Identifier id = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name);
-        Registry.register(BuiltInRegistries.BLOCK, id, block);
-
+        ResourceKey<Block> blockKey = ResourceKey.create(Registries.BLOCK, id);
         ResourceKey<Item> itemKey = ResourceKey.create(Registries.ITEM, id);
-        Registry.register(BuiltInRegistries.ITEM, id, new BlockItem(block, new Item.Properties().setId(itemKey)));
+
+        // 1. Register Block
+        Registry.register(BuiltInRegistries.BLOCK, blockKey, block);
+
+        // 2. Register Item
+        Registry.register(BuiltInRegistries.ITEM, itemKey, new BlockItem(block, new Item.Properties().setId(itemKey)));
+
         return block;
     }
 }

@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cambium:item/root_block"
+    "model": "cambium:item/mineral_soil"
   }
 }

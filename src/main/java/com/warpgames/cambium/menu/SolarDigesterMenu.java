@@ -38,17 +38,17 @@ public class SolarDigesterMenu extends AbstractContainerMenu {
 
         // --- MACHINE SLOTS (Use 'this.container' instead of 'new SimpleContainer') ---
         // 0: Input
-        this.addSlot(new Slot(container, 0, 44, 35));
+        this.addSlot(new Slot(container, 0, 41 + 1, 41 + 1));
         // 1: Output
-        this.addSlot(new Slot(container, 1, 116, 35) {
+        this.addSlot(new Slot(container, 1, 116 + 1, 41 + 1) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         // 2: Byproduct
-        this.addSlot(new Slot(container, 2, 80, 60) {
+        this.addSlot(new Slot(container, 2, 138 + 1, 41 + 1) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         // 3: Lens
-        this.addSlot(new Slot(container, 3, 80, 15));
+        this.addSlot(new Slot(container, 3, 81 + 1, 21 + 1));
 
         // Player Inventory
         addPlayerInventory(playerInventory);

@@ -74,6 +74,8 @@ public class ModModelProvider extends FabricModelProvider {
     // --- FIXED ITEM MODELS ---
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerator) {
+        itemModelGenerator.generateFlatItem(ModBlocks.ROOT_BLOCK.asItem(), ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(ModBlocks.MINERAL_SOIL.asItem(), ModelTemplates.FLAT_ITEM);
         // 1. Define the correct texture location (block/living_leaves)
         Identifier leafTexture = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "block/living_leaves");
 
@@ -85,6 +87,12 @@ public class ModModelProvider extends FabricModelProvider {
             ModelTemplates.FLAT_ITEM.create(
                     ModelLocationUtils.getModelLocation(leafItem),
                     TextureMapping.layer0(leafTexture),
+                    itemModelGenerator.modelOutput
+            );
+            Identifier fruitTexture = Identifier.fromNamespaceAndPath("minecraft", "block/" + tree.getName() + "_ore");
+            ModelTemplates.FLAT_ITEM.create(
+                    ModelLocationUtils.getModelLocation(tree.getFruit().asItem()),
+                    TextureMapping.layer0(fruitTexture),
                     itemModelGenerator.modelOutput
             );
         }

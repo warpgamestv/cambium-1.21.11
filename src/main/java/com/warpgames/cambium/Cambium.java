@@ -1,10 +1,7 @@
 package com.warpgames.cambium;
 
 import com.warpgames.cambium.recipe.ModRecipes;
-import com.warpgames.cambium.registry.ModBlockEntities;
-import com.warpgames.cambium.registry.ModBlocks;
-import com.warpgames.cambium.registry.ModItemGroups;
-import com.warpgames.cambium.registry.ModScreenHandlers;
+import com.warpgames.cambium.registry.*;
 import net.fabricmc.api.ModInitializer;
 
 import org.slf4j.Logger;
@@ -21,6 +18,7 @@ public class Cambium implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		ModBlocks.registerModBlocks();
+		ModItems.registerModItems();
 		ModBlockEntities.registerBlockEntities();
 		ModScreenHandlers.registerScreenHandlers();
 		ModRecipes.registerRecipes();

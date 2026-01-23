@@ -1,0 +1,13 @@
+// 1.21.11	-999999999-01-01T00:00:00	Cambium/Block Loot Tables
+2b60d903a3c9e59597c3e3017082250358148624 data/cambium/loot_table/blocks/diamond_fruit.json
+ba60008ad4dbdf8ac23e9a7b4f8b1021d3290b94 data/cambium/loot_table/blocks/diamond_leaves.json
+b9483e84d3705998cbc10fe304a0a9b18f015682 data/cambium/loot_table/blocks/emerald_fruit.json
+49667056c042805b0214b484788dea51550348db data/cambium/loot_table/blocks/emerald_leaves.json
+e00db7d59b777ee5d8d40a952fee1cb1b38b7f7c data/cambium/loot_table/blocks/gold_fruit.json
+a47c942dfddb8222d6d5cf12af59ab0f65ade4d6 data/cambium/loot_table/blocks/gold_leaves.json
+644dde08486a204424f6782fce754f96544cbd1f data/cambium/loot_table/blocks/iron_fruit.json
+7d26e24a39d799ee4a95aadf89c270add43ba44b data/cambium/loot_table/blocks/iron_leaves.json
+011707bde20fcf50030137dc643aa6ac875e13b8 data/cambium/loot_table/blocks/living_log.json
+046904e4b438a4467a96a9b171c842a2ce5c2df6 data/cambium/loot_table/blocks/mineral_soil.json
+bf78c099783302501f23e6b54e5f6e1f04e472d0 data/cambium/loot_table/blocks/root_block.json
+2f502dee627914ffc52e220fc9b8db8f38d03ea3 data/cambium/loot_table/blocks/solar_digester.json

@@ -3,21 +3,24 @@ package com.warpgames.cambium.registry;
 import com.warpgames.cambium.Cambium;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 
+import java.util.function.Function;
 
 public class ModItems {
+    // We now use a helper that handles the ResourceKey requirement for 1.21+
+    public static final Item FOCUSING_LENS = registerItem("focusing_lens", Item::new, new Item.Properties().stacksTo(1));
+    public static final Item ORGANIC_ASH = registerItem("organic_ash", Item::new, new Item.Properties());
 
-    // --- HELPER METHOD ---
-    private static Item registerItem(String name, Item item) {
-        return Registry.register(
-                BuiltInRegistries.ITEM,
-                Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name),
-                item
-        );
+    private static Item registerItem(String name, Function<Item.Properties, Item> factory, Item.Properties properties) {
+        // 1. Create the ResourceKey first
+        ResourceKey<Item> key = ResourceKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name));
+
+        // 2. Pass the key into the properties so the Item constructor is "registry-aware"
+        return Registry.register(BuiltInRegistries.ITEM, key, factory.apply(properties.setId(key)));
     }
 
     public static void registerModItems() {
