@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "cambium:block/root_block"
+    "end": "cambium:block/root_block_top",
+    "side": "cambium:block/root_block"
   }
 }

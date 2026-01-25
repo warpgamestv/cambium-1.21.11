@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cambium:block/gold_fruit"
+    "model": "cambium:block/gold_fruit_stage2"
   }
 }

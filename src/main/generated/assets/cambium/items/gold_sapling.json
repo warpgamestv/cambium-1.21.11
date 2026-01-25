@@ -1,8 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cambium:block/gold_leaves",
+    "model": "cambium:item/gold_sapling",
     "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -1
+      },
       {
         "type": "minecraft:constant",
         "value": -23296

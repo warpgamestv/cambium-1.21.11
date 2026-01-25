@@ -1,6 +1,6 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cambium:block/emerald_fruit"
+    "model": "cambium:block/emerald_fruit_stage2"
   }
 }

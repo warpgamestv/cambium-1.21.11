@@ -55,8 +55,6 @@ public class ResourceFruitBlock extends Block {
             return Blocks.AIR.defaultBlockState();
         }
 
-        // Default behavior: just return the current state
-        // (We return 'state' directly to avoid the "8 arguments" error from super)
         return state;
     }
 
@@ -67,7 +65,6 @@ public class ResourceFruitBlock extends Block {
         level.removeBlock(pos, false);
 
         // 2. Spawn the Item DYNAMICALLY
-        // usage: tree.getItem() calls the method on the TREE object
         if (this.tree.getItem() != null) {
             popResource(level, pos, new ItemStack(this.tree.getItem()));
         }

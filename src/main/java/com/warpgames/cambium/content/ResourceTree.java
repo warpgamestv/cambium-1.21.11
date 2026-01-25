@@ -11,6 +11,7 @@ public class ResourceTree {
     private Block log;
     private Block leaves;
     private Block fruit;
+    private Block sapling;
 
     public ResourceTree(String name, int color, Item item) {
         this.name = name;
@@ -31,4 +32,7 @@ public class ResourceTree {
 
     public void setFruit(Block fruit) { this.fruit = fruit; }
     public Block getFruit() { return fruit; }
+
+    public void setSapling(Block sapling) {this.sapling = sapling; }
+    public Block getSapling() {return sapling; }
 }
