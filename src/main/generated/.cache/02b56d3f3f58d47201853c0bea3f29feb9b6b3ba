@@ -28,7 +28,9 @@ c274ef1b4b9db88a26241091475ccf110b1a3337 assets/cambium/items/gold_sapling.json
 02fd574b8bc7d287b4bb75e3b0f72b0a2a80fc16 assets/cambium/items/iron_sapling.json
 8101f8a38373bc4bd139e570b93aefd6d7e16452 assets/cambium/items/living_log.json
 0109a9a2b78ee073b6b5354171bcad56ee2912fe assets/cambium/items/mineral_soil.json
+6198d34e70c18cf71e53568e98b8f061df194e24 assets/cambium/items/organic_ash.json
 6a993230ee0ade5f5e855a680fd4c961f6f78fe5 assets/cambium/items/root_block.json
+73ecc32783e187e1281c57bfe4a4b60b6f75b022 assets/cambium/items/solar_lens.json
 97a091bfc32e60de8d1fa6b572c3680b2e98d25d assets/cambium/models/block/diamond_fruit_stage0.json
 956b52af59e2b70b4087c5971990712395b4ad9b assets/cambium/models/block/diamond_fruit_stage1.json
 1f6fac737881cc40948e7643d2c8adfd7854ca32 assets/cambium/models/block/diamond_fruit_stage2.json
@@ -57,3 +59,5 @@ f738b5c9cb6444fe1ea18d33b01009b95fe070a2 assets/cambium/models/item/diamond_sapl
 f738b5c9cb6444fe1ea18d33b01009b95fe070a2 assets/cambium/models/item/emerald_sapling.json
 f738b5c9cb6444fe1ea18d33b01009b95fe070a2 assets/cambium/models/item/gold_sapling.json
 f738b5c9cb6444fe1ea18d33b01009b95fe070a2 assets/cambium/models/item/iron_sapling.json
+44f0b139ea5aad2878ad0b1b6ede2a4f86f075bd assets/cambium/models/item/organic_ash.json
+9206ae260607fbfd3a95f89786c456314b1d5bb5 assets/cambium/models/item/solar_lens.json

@@ -2,6 +2,7 @@ package com.warpgames.cambium.menu;
 
 import com.warpgames.cambium.registry.ModBlocks;
 import com.warpgames.cambium.registry.ModScreenHandlers;
+import com.warpgames.cambium.registry.ModTags;
 import net.minecraft.core.BlockPos; // Import BlockPos
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
@@ -13,42 +14,46 @@ import net.minecraft.world.item.ItemStack;
 public class SolarDigesterMenu extends AbstractContainerMenu {
     private final ContainerData data;
     private final ContainerLevelAccess access;
-    private final Container container; // NEW: Reference to the real inventory
+    private final Container container;
 
     // Client Constructor
     public SolarDigesterMenu(int syncId, Inventory playerInventory, BlockPos pos) {
-        // On the client, we don't have the BlockEntity, so we use a SimpleContainer as a placeholder
         this(syncId, playerInventory, ContainerLevelAccess.create(playerInventory.player.level(), pos), new SimpleContainerData(2), new SimpleContainer(4));
     }
 
-    // Server Constructor (Updated signature)
+    // Server Constructor
     public SolarDigesterMenu(int syncId, Inventory playerInventory, ContainerLevelAccess access, ContainerData data, Container container) {
         super(ModScreenHandlers.SOLAR_DIGESTER_MENU, syncId);
         this.access = access;
         this.data = data;
-        this.container = container; // Save it
-
-        // Check if the container is big enough
+        this.container = container;
         checkContainerSize(container, 4);
-
-        // Tells the menu to sync updates (like opening/closing animations)
         container.startOpen(playerInventory.player);
 
         addDataSlots(data);
 
-        // --- MACHINE SLOTS (Use 'this.container' instead of 'new SimpleContainer') ---
+        // --- MACHINE SLOTS ---
         // 0: Input
         this.addSlot(new Slot(container, 0, 41 + 1, 41 + 1));
         // 1: Output
-        this.addSlot(new Slot(container, 1, 116 + 1, 41 + 1) {
+        this.addSlot(new Slot(container, 1, 121 + 1, 31 + 1) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         // 2: Byproduct
-        this.addSlot(new Slot(container, 2, 138 + 1, 41 + 1) {
+        this.addSlot(new Slot(container, 2, 121 + 1, 51 + 1) {
             @Override public boolean mayPlace(ItemStack stack) { return false; }
         });
         // 3: Lens
-        this.addSlot(new Slot(container, 3, 81 + 1, 21 + 1));
+        this.addSlot(new Slot(container, 3, 81 + 1, 16 + 1){
+            @Override
+            public boolean mayPlace(ItemStack stack) {
+                return stack.is(ModTags.Items.LENS);
+            }
+            @Override
+            public int getMaxStackSize() {
+                return 1;
+            }
+        });
 
         // Player Inventory
         addPlayerInventory(playerInventory);
@@ -84,13 +89,13 @@ public class SolarDigesterMenu extends AbstractContainerMenu {
         }
     }
     public boolean isCrafting() {
-        return data.get(0) > 0; // 0 is progress
+        return data.get(0) > 0;
     }
 
     public int getScaledProgress() {
         int progress = this.data.get(0);
-        int maxProgress = this.data.get(1);  // 1 is maxProgress
-        int arrowPixelSize = 24; // Width of the arrow in pixels
+        int maxProgress = this.data.get(1);
+        int arrowPixelSize = 24;
 
         if (maxProgress == 0 || progress == 0) {
             return 0;

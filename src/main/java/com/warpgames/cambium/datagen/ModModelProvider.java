@@ -4,6 +4,7 @@ import com.warpgames.cambium.Cambium;
 import com.warpgames.cambium.block.ResourceFruitBlock;
 import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlocks;
+import com.warpgames.cambium.registry.ModItems;
 import com.warpgames.cambium.registry.TreeRegistry;
 import net.fabricmc.fabric.api.client.datagen.v1.provider.FabricModelProvider;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -90,13 +91,14 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerators itemModelGenerator) {
 
-        // 1. Root Block -> Use the Block Model (Cube Column)
+        itemModelGenerator.generateFlatItem(ModItems.ORGANIC_ASH, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(ModItems.SOLAR_LENS, ModelTemplates.FLAT_ITEM);
+
         itemModelGenerator.itemModelOutput.accept(
                 ModBlocks.ROOT_BLOCK.asItem(),
                 ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(ModBlocks.ROOT_BLOCK))
         );
 
-        // 2. Mineral Soil -> Use the Block Model (Cube)
         itemModelGenerator.itemModelOutput.accept(
                 ModBlocks.MINERAL_SOIL.asItem(),
                 ItemModelUtils.plainModel(ModelLocationUtils.getModelLocation(ModBlocks.MINERAL_SOIL))

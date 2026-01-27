@@ -2,6 +2,7 @@ package com.warpgames.cambium.block;
 
 import com.mojang.serialization.MapCodec; // REQUIRED IMPORT
 import com.warpgames.cambium.block.entity.MineralSoilBlockEntity;
+import com.warpgames.cambium.registry.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
@@ -9,7 +10,6 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.RenderShape;
@@ -46,37 +46,32 @@ public class MineralSoilBlock extends BaseEntityBlock {
 
     // --- THE STONE EATER LOGIC ---
     @Override
-    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        int fuelValue = getFuelValue(stack);
+    protected InteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        // 1. Check if the item in hand is Organic Ash
+        if (stack.is(ModItems.ORGANIC_ASH)) {
 
-        if (fuelValue > 0) {
-            if (level.getBlockEntity(pos) instanceof MineralSoilBlockEntity soil) {
+            // 2. Run logic (Server Side Only)
+            if (!level.isClientSide()) {
+                // Get the BlockEntity (The "Brain" of the block)
+                if (level.getBlockEntity(pos) instanceof MineralSoilBlockEntity soilEntity) {
 
-                // Try to add charge (returns false if full)
-                if (soil.addCharge(fuelValue)) {
-                    level.playSound(player, pos, SoundEvents.GRINDSTONE_USE, SoundSource.BLOCKS, 1.0f, 1.0f);
+                    // Add Charge (You can tweak this number! 1 Ash = 10 Charge?)
+                    soilEntity.addCharge(10);
 
-                    if (!player.getAbilities().instabuild) {
-                        stack.shrink(1);
-                    }
+                    // Consume 1 item from the player's hand
+                    stack.shrink(1);
 
-                    return InteractionResult.SUCCESS;
+                    // Play a sound to confirm it worked (using Bone Meal sound for now)
+                    level.playSound(null, pos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0F, 1.0F);
+
+                    // Update the block state if you have visual changes (optional)
+                    player.displayClientMessage(net.minecraft.network.chat.Component.literal("Soil Charge: " + soilEntity.getCharge()), true);
                 }
             }
+
+            return InteractionResult.SUCCESS;
         }
 
         return InteractionResult.PASS;
-    }
-
-    // Helper to define what rocks give what charge
-    private int getFuelValue(ItemStack stack) {
-        if (stack.is(Items.COBBLESTONE)) return 5;
-        if (stack.is(Items.COBBLED_DEEPSLATE)) return 8;
-        if (stack.is(Items.ANDESITE)) return 5;
-        if (stack.is(Items.DIORITE)) return 5;
-        if (stack.is(Items.GRANITE)) return 5;
-        if (stack.is(Items.TUFF)) return 5;
-        if (stack.is(Items.DRIPSTONE_BLOCK)) return 6;
-        return 0;
     }
 }

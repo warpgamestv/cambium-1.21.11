@@ -6,7 +6,7 @@ import net.minecraft.world.level.block.Block;
 public class ResourceTree {
     private final String name;
     private final int color;
-    private final Item item; // The item this tree produces (e.g. Raw Iron)
+    private final Item item;
 
     private Block log;
     private Block leaves;
@@ -21,7 +21,7 @@ public class ResourceTree {
 
     public String getName() { return name; }
     public int getColor() { return color; }
-    public Item getItem() { return item; } // Fixes ResourceFruitBlock error
+    public Item getItem() { return item; }
 
     // --- SETTERS (Fixes ModBlocks error) ---
     public void setLog(Block log) { this.log = log; }

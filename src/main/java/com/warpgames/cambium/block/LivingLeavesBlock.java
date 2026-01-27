@@ -27,11 +27,10 @@ public class LivingLeavesBlock extends LeavesBlock {
     private final ResourceTree tree;
 
     public LivingLeavesBlock(ResourceTree tree, Properties properties) {
-        super(0.5f, properties); // FIXED: Removed '0.5f' which caused the argument error
+        super(0.5f, properties);
         this.tree = tree;
     }
 
-    // Helper to find tree from name
     private static ResourceTree getTreeByName(String name) {
         return TreeRegistry.TREES.stream()
                 .filter(t -> t.getName().equals(name))
@@ -39,13 +38,11 @@ public class LivingLeavesBlock extends LeavesBlock {
                 .orElse(TreeRegistry.IRON);
     }
 
-    // FIXED: Changed from 'protected' to 'public'
     @Override
     public MapCodec<LivingLeavesBlock> codec() {
         return CODEC;
     }
 
-    // FIXED: Added missing method for 1.21
     @Override
     public void spawnFallingLeavesParticle(Level level, BlockPos pos, RandomSource random) {
         if (level.isClientSide() && random.nextInt(32) == 0) {
@@ -81,7 +78,7 @@ public class LivingLeavesBlock extends LeavesBlock {
             BlockPos checkPos = leafPos.below(i);
             BlockEntity be = level.getBlockEntity(checkPos);
             if (be instanceof MineralSoilBlockEntity soil) {
-                return soil.tryConsumeCharge();
+                return soil.tryConsumeCharge(1);
             }
         }
         return false;

@@ -15,7 +15,6 @@ public class TreeRegistry {
     public static final ResourceTree DIAMOND = register("diamond", 0xA9C5A0, Items.DIAMOND);
     public static final ResourceTree EMERALD = register("emerald", 0x4B644A, Items.EMERALD);
 
-    // Call this from ModBlocks to load the class
     public static void init() {}
 
     private static ResourceTree register(String name, int color, Item drop) {

@@ -13,5 +13,7 @@ public class CambiumDataGenerator implements DataGeneratorEntrypoint {
 		pack.addProvider(ModRecipeProvider::new);
 		pack.addProvider(ModEnLangProvider::new);
 		pack.addProvider(ModLootTableProvider::new);
+		pack.addProvider(SplicingRecipeProvider::new);
+		pack.addProvider(ModItemTagProvider::new);
 	}
 }

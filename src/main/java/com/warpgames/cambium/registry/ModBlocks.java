@@ -75,23 +75,18 @@ public class ModBlocks {
         Block fruit = new ResourceFruitBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.COCOA)
                 .setId(fruitKey).strength(0.5f).sound(SoundType.GLASS).noOcclusion());
 
-        // Note: Saplings are usually instabroken, no collision
         Block sapling = new ResourceSaplingBlock(tree, BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_SAPLING)
                 .setId(saplingKey).noOcclusion().sound(SoundType.GRASS).instabreak().noCollision());
 
         // 2. Register Blocks & Items (WITH COLOR COMPONENT!)
         registerBlockWithColor(leavesName, leaves, tree.getColor());
         registerBlockWithColor(fruitName, fruit, tree.getColor());
-
-        // --- CHANGE HERE ---
-        // We now register the sapling with color so the item is tinted in the inventory
         registerBlockWithColor(saplingName, sapling, tree.getColor());
 
-        // 3. Link to Tree Object
         tree.setLog(LIVING_LOG);
         tree.setLeaves(leaves);
         tree.setFruit(fruit);
-        tree.setSapling(sapling); // Ensure you have this setter in ResourceTree!
+        tree.setSapling(sapling);
     }
 
     // --- HELPER METHODS ---

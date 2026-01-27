@@ -25,10 +25,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
 public class SolarDigesterBlock extends BaseEntityBlock {
-
-    // FIX: Double cast to bypass the generic inference error
-    @SuppressWarnings("unchecked")
-    public static final MapCodec<SolarDigesterBlock> CODEC = (MapCodec<SolarDigesterBlock>) (MapCodec<?>) simpleCodec(SolarDigesterBlock::new);
+    public static final MapCodec<SolarDigesterBlock> CODEC = simpleCodec(SolarDigesterBlock::new);
 
     public static final Property<Direction> FACING = BlockStateProperties.HORIZONTAL_FACING;
 

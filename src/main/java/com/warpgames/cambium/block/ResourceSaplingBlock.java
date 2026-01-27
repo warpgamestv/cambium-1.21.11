@@ -1,6 +1,7 @@
 package com.warpgames.cambium.block;
 
 import com.mojang.serialization.MapCodec;
+import com.warpgames.cambium.block.entity.MineralSoilBlockEntity;
 import com.warpgames.cambium.block.entity.RootBlockEntity;
 import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlocks;
@@ -10,15 +11,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.BushBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 
 public class ResourceSaplingBlock extends BushBlock {
 
-    // Codec required for 1.21+
-    // Note: Passing 'null' here is a temporary hack to satisfy the crash.
-    // Ideally, you register a separate Block class for every tree type, but this works for now.
     public static final MapCodec<BushBlock> CODEC = simpleCodec(properties -> new ResourceSaplingBlock(null, properties));
 
     private final ResourceTree tree;
@@ -40,7 +39,6 @@ public class ResourceSaplingBlock extends BushBlock {
     }
 
     // --- PLACEMENT LOGIC ---
-    // Allow planting on Dirt, Grass, OR Mineral Soil
     @Override
     protected boolean mayPlaceOn(BlockState state, BlockGetter level, BlockPos pos) {
         return state.is(ModBlocks.MINERAL_SOIL) || super.mayPlaceOn(state, level, pos);
@@ -49,27 +47,26 @@ public class ResourceSaplingBlock extends BushBlock {
     // --- GROWTH LOGIC ---
     @Override
     public void randomTick(BlockState state, ServerLevel level, BlockPos pos, RandomSource random) {
-        // 1. Check light level (Standard vanilla sapling requirement)
         if (level.getMaxLocalRawBrightness(pos.above()) >= 9 && random.nextInt(7) == 0) {
+            BlockPos soilPos = pos.below();
+            BlockState soilState = level.getBlockState(soilPos);
+            if (soilState.is(ModBlocks.MINERAL_SOIL)) {
+                BlockEntity be = level.getBlockEntity(soilPos);
+                if (be instanceof MineralSoilBlockEntity soilEntity) {
 
-            // 2. STAGE CHECK: ONLY grow if sitting on Mineral Soil
-            if (level.getBlockState(pos.below()).is(ModBlocks.MINERAL_SOIL)) {
-                grow(level, pos);
+                    if (soilEntity.tryConsumeCharge(50)) {
+                        grow(level, pos);
+                    } else {
+                    }
+                }
             }
         }
     }
 
     public void grow(ServerLevel level, BlockPos pos) {
-        // REMOVED: level.setBlock(pos.below(), ModBlocks.MINERAL_SOIL...);
-        // We no longer auto-place soil. The player must have done it.
-
-        // 1. Transform into Root Block
         BlockState rootState = ModBlocks.ROOT_BLOCK.defaultBlockState();
         level.setBlock(pos, rootState, 3);
-
-        // 2. Inject DNA (Fixes the "Gold Sapling is Useless" issue)
         if (level.getBlockEntity(pos) instanceof RootBlockEntity rootEntity) {
-            // Safety check: ensure 'tree' isn't null (due to the codec hack)
             if (this.tree != null) {
                 rootEntity.setTreeType(this.tree.getName());
                 rootEntity.setChanged();

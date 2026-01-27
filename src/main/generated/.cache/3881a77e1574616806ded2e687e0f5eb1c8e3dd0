@@ -1,0 +1,9 @@
+// 1.21.11	-999999999-01-01T00:00:00	Cambium/Cambium Splicing Recipes
+d75e04bfb0ed2d9e396b73f87d72a084b5e2c617 data/cambium/advancement/recipes/misc/splicing/diamond_sapling.json
+fe4e4e4eb6336243cafbac9da60c030391719647 data/cambium/advancement/recipes/misc/splicing/emerald_sapling.json
+247e5ac055628ff0f0aebea99f61d5b812d61101 data/cambium/advancement/recipes/misc/splicing/gold_sapling.json
+c0eb297fdf0b63c92217dff76be0a28b8c102042 data/cambium/advancement/recipes/misc/splicing/iron_sapling.json
+1e412146de3860adef29bbd1bb19ab6abf66bc56 data/cambium/recipe/splicing/diamond_sapling.json
+74458138a0c77d44a408fc19dc3d25d179adcdfc data/cambium/recipe/splicing/emerald_sapling.json
+ed228b18b915e7aa53ff61f70f4eb52b24bd0dfd data/cambium/recipe/splicing/gold_sapling.json
+b20e92217d77e1af5558655b3e2790149bbd5bf3 data/cambium/recipe/splicing/iron_sapling.json

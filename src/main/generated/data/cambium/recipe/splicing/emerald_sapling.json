@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:emerald",
+  "base": "minecraft:oak_sapling",
+  "result": {
+    "id": "cambium:emerald_sapling"
+  },
+  "template": "cambium:organic_ash"
+}

@@ -55,7 +55,6 @@ public class SolarDigesterScreen extends AbstractContainerScreen<SolarDigesterMe
         );
         int arrowWidth = this.menu.getScaledProgress();
 
-        // Only draw if there is progress
         if (arrowWidth > 0) {
             graphics.blit(
                     RenderPipelines.GUI_TEXTURED, // 1. Pipeline

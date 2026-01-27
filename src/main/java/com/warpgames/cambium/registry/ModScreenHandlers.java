@@ -11,14 +11,12 @@ import net.minecraft.world.inventory.MenuType;
 
 public class ModScreenHandlers {
 
-    // --- THE FIX ---
-    // We explicitly tell it: "This menu uses SolarDigesterMenu, and it expects a BlockPos data packet."
     public static final MenuType<SolarDigesterMenu> SOLAR_DIGESTER_MENU = Registry.register(
             BuiltInRegistries.MENU,
             Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_digester_menu"),
             new ExtendedScreenHandlerType<>(
                     SolarDigesterMenu::new,
-                    BlockPos.STREAM_CODEC // This is required in 1.21 to handle the data!
+                    BlockPos.STREAM_CODEC
             )
     );
 

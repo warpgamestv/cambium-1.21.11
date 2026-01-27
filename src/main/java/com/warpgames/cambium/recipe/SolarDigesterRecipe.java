@@ -24,15 +24,17 @@ public class SolarDigesterRecipe implements Recipe<SingleRecipeInput> {
     private final float byproductChance;
     private final int cookingTime;
     private final float experience;
+    private final boolean requiresLens;
     private final String group;
 
-    public SolarDigesterRecipe(Ingredient input, ItemStack output, ItemStack byproduct, float byproductChance, int cookingTime, float experience) {
+    public SolarDigesterRecipe(Ingredient input, ItemStack output, ItemStack byproduct, float byproductChance, int cookingTime, float experience, boolean requiresLens) {
         this.input = input;
         this.output = output;
         this.byproduct = byproduct;
         this.byproductChance = byproductChance;
         this.cookingTime = cookingTime;
         this.experience = experience;
+        this.requiresLens = requiresLens;
         this.group = "";
     }
 
@@ -43,6 +45,7 @@ public class SolarDigesterRecipe implements Recipe<SingleRecipeInput> {
     public float getByproductChance() { return byproductChance; }
     public int getCookingTime() { return cookingTime; }
     public float getExperience() { return experience; }
+    public boolean requiresLens() {return requiresLens;}
 
     // --- STANDARD LOGIC ---
 
@@ -55,8 +58,6 @@ public class SolarDigesterRecipe implements Recipe<SingleRecipeInput> {
     public ItemStack assemble(SingleRecipeInput inv, HolderLookup.Provider lookup) {
         return output.copy();
     }
-
-    // --- FIX: Deleted 'canCraftInDimensions' and 'getResultItem' (Provider) as they no longer exist in your version ---
 
     @Override
     public String group() {
@@ -105,7 +106,8 @@ public class SolarDigesterRecipe implements Recipe<SingleRecipeInput> {
                 ItemStack.CODEC.optionalFieldOf("byproduct", ItemStack.EMPTY).forGetter(SolarDigesterRecipe::getByproduct),
                 Codec.FLOAT.optionalFieldOf("chance", 1.0f).forGetter(SolarDigesterRecipe::getByproductChance),
                 Codec.INT.optionalFieldOf("cookingtime", 100).forGetter(SolarDigesterRecipe::getCookingTime),
-                Codec.FLOAT.optionalFieldOf("experience", 0.0f).forGetter(SolarDigesterRecipe::getExperience)
+                Codec.FLOAT.optionalFieldOf("experience", 0.0f).forGetter(SolarDigesterRecipe::getExperience),
+                Codec.BOOL.optionalFieldOf("requires_lens", false).forGetter(SolarDigesterRecipe::requiresLens)
         ).apply(inst, SolarDigesterRecipe::new));
 
         public static final StreamCodec<RegistryFriendlyByteBuf, SolarDigesterRecipe> STREAM_CODEC = StreamCodec.composite(
@@ -115,6 +117,7 @@ public class SolarDigesterRecipe implements Recipe<SingleRecipeInput> {
                 net.minecraft.network.codec.ByteBufCodecs.FLOAT, SolarDigesterRecipe::getByproductChance,
                 net.minecraft.network.codec.ByteBufCodecs.INT, SolarDigesterRecipe::getCookingTime,
                 net.minecraft.network.codec.ByteBufCodecs.FLOAT, SolarDigesterRecipe::getExperience,
+                net.minecraft.network.codec.ByteBufCodecs.BOOL, SolarDigesterRecipe::requiresLens,
                 SolarDigesterRecipe::new
         );
 

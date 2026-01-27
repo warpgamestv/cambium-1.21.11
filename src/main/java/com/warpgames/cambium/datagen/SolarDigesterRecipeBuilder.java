@@ -28,6 +28,7 @@ public class SolarDigesterRecipeBuilder implements RecipeBuilder {
     private float byproductChance = 0.0f;
     private int cookingTime = 100;
     private float experience = 0.0f;
+    private boolean requiresLens = false;
     private final Map<String, Criterion<?>> criteria = new LinkedHashMap<>();
     @Nullable
     private String group;
@@ -49,13 +50,14 @@ public class SolarDigesterRecipeBuilder implements RecipeBuilder {
         return digester(Ingredient.of(input), output, count);
     }
 
-    // NOTE: The 'digester(TagKey...)' method is DELETED because it causes crashes.
-    // Use 'digester(Ingredient.of(tag), ...)' in your provider instead.
-
     // --- CHAINABLE METHODS ---
     public SolarDigesterRecipeBuilder byproduct(ItemLike item, int count, float chance) {
         this.byproduct = new ItemStack(item, count);
         this.byproductChance = chance;
+        return this;
+    }
+    public SolarDigesterRecipeBuilder requiresLens() {
+        this.requiresLens = true;
         return this;
     }
 
@@ -103,7 +105,8 @@ public class SolarDigesterRecipeBuilder implements RecipeBuilder {
                 this.byproduct,
                 this.byproductChance,
                 this.cookingTime,
-                this.experience
+                this.experience,
+                this.requiresLens
         );
 
         output.accept(
@@ -116,7 +119,6 @@ public class SolarDigesterRecipeBuilder implements RecipeBuilder {
     @Override
     public void save(RecipeOutput output) {
         Identifier itemId = RecipeBuilder.getDefaultRecipeId(this.getResult());
-        // Use Identifier.of for 1.21+
         Identifier recipeId = Identifier.fromNamespaceAndPath(itemId.getNamespace(), "solar_digesting/" + itemId.getPath());
         ResourceKey<Recipe<?>> key = ResourceKey.create(Registries.RECIPE, recipeId);
         save(output, key);

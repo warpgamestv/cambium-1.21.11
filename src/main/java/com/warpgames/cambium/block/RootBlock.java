@@ -30,21 +30,17 @@ public class RootBlock extends BaseEntityBlock {
         return CODEC;
     }
 
-    // CHANGE 2: The Render Shape
-    // BaseEntityBlock defaults to INVISIBLE. We must set it back to MODEL so we can see it.
     @Override
     public RenderShape getRenderShape(BlockState state) {
         return RenderShape.MODEL;
     }
 
-    // CHANGE 3: Create the BlockEntity when placed
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
         return new RootBlockEntity(pos, state);
     }
 
-    // CHANGE 4: Connect the "tick" method
     @Nullable
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
@@ -52,7 +48,6 @@ public class RootBlock extends BaseEntityBlock {
         return createTickerHelper(type, ModBlockEntities.ROOT_BE, RootBlockEntity::tick);
     }
 
-    // Keep your existing Right-Click code below...
     @Override
     protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
         if (!level.isClientSide()) {

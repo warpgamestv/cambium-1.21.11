@@ -18,12 +18,8 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
 
     @Override
     protected void addTags(HolderLookup.Provider wrapperLookup) {
-        // NOTE: In your version of Fabric, the method to get a builder
-        // that accepts BLOCKS (not Keys) is 'getOrCreateTagBuilder' or 'tag'.
-        // However, your source code shows 'valueLookupBuilder' is the special Fabric one.
-        // Let's try the standard 'getOrCreateTagBuilder' which comes from the Minecraft parent class.
 
-        // 1. Logs
+        // Logs
         valueLookupBuilder(BlockTags.LOGS)
                 .add(ModBlocks.LIVING_LOG)
                 .add(ModBlocks.ROOT_BLOCK);
@@ -32,11 +28,11 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
                 .add(ModBlocks.LIVING_LOG)
                 .add(ModBlocks.ROOT_BLOCK);
 
-        // 2. Soil
-        valueLookupBuilder(BlockTags.MINEABLE_WITH_PICKAXE)
+        // Soil
+        valueLookupBuilder(BlockTags.MINEABLE_WITH_SHOVEL)
                 .add(ModBlocks.MINERAL_SOIL);
 
-        // 3. Leaves
+        // Leaves
         var leavesTag = valueLookupBuilder(BlockTags.LEAVES);
         var hoeTag = valueLookupBuilder(BlockTags.MINEABLE_WITH_HOE);
 

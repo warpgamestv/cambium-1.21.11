@@ -18,9 +18,6 @@ public class ModBlockEntities {
             FabricBlockEntityTypeBuilder.create(MineralSoilBlockEntity::new, ModBlocks.MINERAL_SOIL).build(null)
     );
 
-    // --- THE FIX IS HERE ---
-    // Old (Wrong): public static final BlockEntityType<RootBlockEntity> SOLAR_DIGESTER_BE
-    // New (Right): public static final BlockEntityType<SolarDigesterBlockEntity> SOLAR_DIGESTER_BE
     public static final BlockEntityType<SolarDigesterBlockEntity> SOLAR_DIGESTER_BE = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("cambium", "solar_digester_be"),

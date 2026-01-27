@@ -4,6 +4,7 @@ import com.warpgames.cambium.menu.SolarDigesterMenu;
 import com.warpgames.cambium.recipe.ModRecipes;
 import com.warpgames.cambium.recipe.SolarDigesterRecipe;
 import com.warpgames.cambium.registry.ModBlockEntities;
+import com.warpgames.cambium.registry.ModTags;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
@@ -120,6 +121,13 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         ItemStack recipeByproduct = recipe.getByproduct();
         ItemStack currentOutput = this.inventory.get(OUTPUT_SLOT);
         ItemStack currentByproduct = this.inventory.get(BYPRODUCT_SLOT);
+
+        if (recipe.requiresLens()) {
+            ItemStack lensStack = this.getItem(3); // Slot 3 is lens
+            if (lensStack.isEmpty() || !lensStack.is(ModTags.Items.LENS)) {
+                return false; // Stop crafting if lens is missing
+            }
+        }
 
         boolean outputFits = currentOutput.isEmpty() ||
                 (currentOutput.getItem() == recipeOutput.getItem() &&

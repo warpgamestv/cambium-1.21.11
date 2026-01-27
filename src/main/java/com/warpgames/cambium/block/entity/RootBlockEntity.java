@@ -40,10 +40,6 @@ public class RootBlockEntity extends BlockEntity {
         setChanged();
     }
 
-    public String getTreeType() {
-        return this.treeType;
-    }
-
     private ResourceTree getTree() {
         return TreeRegistry.TREES.stream()
                 .filter(t -> t.getName().equals(this.treeType))
@@ -128,9 +124,8 @@ public class RootBlockEntity extends BlockEntity {
     public static void tick(Level level, BlockPos pos, BlockState state, RootBlockEntity entity) {
         if (level.isClientSide()) return;
 
-        // 1. GENERATION PHASE
+        // 1. GENERATION PHASE (Unchanged)
         if (!entity.isPlanGenerated) {
-            // RESTORED CHECK: Only generate if sitting on Mineral Soil
             if (entity.hasValidSoil(level, pos)) {
                 entity.generateTree();
                 entity.isPlanGenerated = true;
@@ -139,28 +134,36 @@ public class RootBlockEntity extends BlockEntity {
             return;
         }
 
-        // 2. PRODUCTION PHASE (Once fully grown)
+        // 2. PRODUCTION PHASE (The Fruit Loop)
         if (entity.growthIndex >= entity.buildPlan.size()) {
-            // OPTIONAL: You could add a check here too if you want the tree to DIE if soil is broken
-            // if (!entity.hasValidSoil(level, pos)) return;
 
             entity.timer++;
             if (entity.timer >= 20) {
                 ResourceTree treeDef = entity.getTree();
+
                 for (BuildStep step : entity.buildPlan) {
                     if (step.state().getBlock() == treeDef.getFruit()) {
+
                         BlockPos fruitPos = pos.offset(step.offset());
                         BlockState currentBlock = level.getBlockState(fruitPos);
-                        if (level.isEmptyBlock(fruitPos)) {
-                            if (level.random.nextInt(10) == 0) {
-                                level.setBlock(fruitPos, treeDef.getFruit().defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
-                                level.levelEvent(2005, fruitPos, 0);
+
+                        // LOGIC: Random Chance -> Check Charge -> Action
+                        if (level.random.nextInt(10) == 0) {
+
+                            // A. REGROWTH (Air -> Stage 0)
+                            if (level.isEmptyBlock(fruitPos)) {
+                                if (entity.tryUseSoilCharge(level, pos)) {
+                                    level.setBlock(fruitPos, treeDef.getFruit().defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
+                                    level.levelEvent(2005, fruitPos, 0); // Bonemeal sound
+                                }
                             }
-                        } else if (currentBlock.getBlock() == treeDef.getFruit()) {
-                            int age = currentBlock.getValue(ResourceFruitBlock.AGE);
-                            if (level.random.nextInt(10) == 0) {
+                            // B. AGING (Stage 0 -> 1 -> 2 -> Drop)
+                            else if (currentBlock.getBlock() == treeDef.getFruit()) {
+                                int age = currentBlock.getValue(ResourceFruitBlock.AGE);
                                 if (age < 2) {
-                                    level.setBlock(fruitPos, currentBlock.setValue(ResourceFruitBlock.AGE, age + 1), 3);
+                                    if (entity.tryUseSoilCharge(level, pos)) {
+                                        level.setBlock(fruitPos, currentBlock.setValue(ResourceFruitBlock.AGE, age + 1), 3);
+                                    }
                                 } else {
                                     if (level instanceof ServerLevel serverLevel && currentBlock.getBlock() instanceof ResourceFruitBlock rfb) {
                                         rfb.dropFruit(serverLevel, fruitPos);
@@ -207,6 +210,14 @@ public class RootBlockEntity extends BlockEntity {
         this.treeType = input.read("TreeType", Codec.STRING).orElse("");
         this.growthIndex = input.read("GrowthIndex", Codec.INT).orElse(0);
         this.isPlanGenerated = input.read("IsPlanGenerated", Codec.BOOL).orElse(false);
+    }
+
+    private boolean tryUseSoilCharge(Level level, BlockPos rootPos) {
+        BlockPos soilPos = rootPos.below();
+        if (level.getBlockEntity(soilPos) instanceof MineralSoilBlockEntity soil) {
+            return soil.tryConsumeCharge(2);
+        }
+        return false;
     }
 
     record BuildStep(Vec3i offset, BlockState state){}

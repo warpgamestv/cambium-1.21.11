@@ -2,9 +2,9 @@
   "type": "cambium:solar_digesting",
   "byproduct": {
     "count": 1,
-    "id": "minecraft:dead_bush"
+    "id": "cambium:organic_ash"
   },
-  "chance": 0.1,
+  "chance": 0.5,
   "cookingtime": 200,
   "experience": 1.0,
   "ingredient": "#minecraft:logs",

@@ -1,5 +1,6 @@
 package com.warpgames.cambium.datagen;
 
+import com.warpgames.cambium.registry.ModItems;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
@@ -25,28 +26,32 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(registries, output) {
             @Override
             public void buildRecipes() {
-                // Example 1: Oak Log -> Charcoal
-                SolarDigesterRecipeBuilder.digester(Items.OAK_LOG, Items.CHARCOAL, 1)
-                        .byproduct(Items.STICK, 2, 0.50f)
-                        .time(100)
-                        .xp(0.5f)
-                        .unlockedBy("has_oak_log", this.has(Items.OAK_LOG))
-                        .save(this.output);
 
-                // Example 2: ALL Logs -> Charcoal
+                // Example: ALL Logs -> Charcoal
                 ResourceKey<Recipe<?>> customKey = ResourceKey.create(
                         Registries.RECIPE,
                         Identifier.fromNamespaceAndPath("cambium", "solar_digesting/charcoal_from_logs")
                 );
 
-                // FIX: Use 'this.tag(ItemTags.LOGS)' instead of just 'ItemTags.LOGS'
-                // This uses the internal datagen registry lookup, which prevents the crash.
                 SolarDigesterRecipeBuilder.digester(this.tag(ItemTags.LOGS), Items.CHARCOAL, 1)
-                        .byproduct(Items.DEAD_BUSH, 1, 0.10f)
+                        .byproduct(ModItems.ORGANIC_ASH, 1, 0.50f)
                         .time(200)
                         .xp(1.0f)
                         .unlockedBy("has_logs", this.has(ItemTags.LOGS))
                         .save(this.output, customKey);
+
+                //Example: Sand -> Glass
+                ResourceKey<Recipe<?>> glassKey = ResourceKey.create(
+                        Registries.RECIPE,
+                        Identifier.fromNamespaceAndPath("cambium", "solar_digesting/glass_from_sand")
+                );
+
+                SolarDigesterRecipeBuilder.digester(Items.SAND, Items.GLASS, 1)
+                        .time(100)        // Faster than furnace
+                        .xp(0.1f)
+                        .requiresLens()   // <--- TEST: This triggers the JEI item display
+                        .unlockedBy("has_sand", this.has(Items.SAND))
+                        .save(this.output, glassKey);
             }
         };
     }

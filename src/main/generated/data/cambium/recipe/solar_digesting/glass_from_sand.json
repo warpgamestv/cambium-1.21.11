@@ -1,0 +1,11 @@
+{
+  "type": "cambium:solar_digesting",
+  "chance": 0.0,
+  "experience": 0.1,
+  "ingredient": "minecraft:sand",
+  "requires_lens": true,
+  "result": {
+    "count": 1,
+    "id": "minecraft:glass"
+  }
+}

@@ -12,7 +12,7 @@ import java.util.function.Function;
 
 public class ModItems {
     // We now use a helper that handles the ResourceKey requirement for 1.21+
-    public static final Item FOCUSING_LENS = registerItem("focusing_lens", Item::new, new Item.Properties().stacksTo(1));
+    public static final Item SOLAR_LENS = registerItem("solar_lens", Item::new, new Item.Properties().stacksTo(1));
     public static final Item ORGANIC_ASH = registerItem("organic_ash", Item::new, new Item.Properties());
 
     private static Item registerItem(String name, Function<Item.Properties, Item> factory, Item.Properties properties) {

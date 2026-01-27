@@ -2,7 +2,6 @@ package com.warpgames.cambium.datagen;
 
 import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlocks;
-import com.warpgames.cambium.registry.ModItemGroups;
 import com.warpgames.cambium.registry.ModItems;
 import com.warpgames.cambium.registry.TreeRegistry;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
@@ -23,32 +22,36 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add("itemGroup.cambium", "Cambium");
         builder.add("itemGroup.cambium_trees", "Cambium Resource Trees");
 
-        // --- Blocks ---
+        // --- Blocks (Static) ---
         builder.add(ModBlocks.SOLAR_DIGESTER, "Solar Digester");
         builder.add(ModBlocks.MINERAL_SOIL, "Mineral Soil");
         builder.add(ModBlocks.LIVING_LOG, "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK, "Root Block");
 
+        // 2. Register the ITEM Name
+        builder.add(ModBlocks.SOLAR_DIGESTER.asItem(), "Solar Digester");
+        builder.add(ModBlocks.MINERAL_SOIL.asItem(), "Mineral Soil");
+        builder.add(ModBlocks.LIVING_LOG.asItem(), "Living Log");
+        builder.add(ModBlocks.ROOT_BLOCK.asItem(), "Root Block");
+
         // --- Items ---
-        builder.add(ModItems.FOCUSING_LENS, "Focusing Lens");
+        builder.add(ModItems.SOLAR_LENS, "Solar Lens");
         builder.add(ModItems.ORGANIC_ASH, "Organic Ash");
 
         // --- Dynamic Resource Tree Support ---
-        // This loop goes through every tree in your registry and names its parts
         for (ResourceTree tree : TreeRegistry.TREES) {
             String rawName = tree.getName();
             String capitalizedName = rawName.substring(0, 1).toUpperCase() + rawName.substring(1).toLowerCase();
 
-            // 1. Leaves
-            // We register both block and item keys to be safe
+            // Leaves (Block & Item)
             builder.add("block.cambium." + rawName + "_leaves", capitalizedName + " Leaves");
             builder.add("item.cambium." + rawName + "_leaves", capitalizedName + " Leaves");
 
-            // 2. Fruit
+            // Fruit (Block & Item)
             builder.add("block.cambium." + rawName + "_fruit", capitalizedName + " Fruit");
             builder.add("item.cambium." + rawName + "_fruit", capitalizedName + " Fruit");
 
-            // 3. Saplings
+            // Saplings (Block & Item)
             builder.add("block.cambium." + rawName + "_sapling", capitalizedName + " Sapling");
             builder.add("item.cambium." + rawName + "_sapling", capitalizedName + " Sapling");
         }
