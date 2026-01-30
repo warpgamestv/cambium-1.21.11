@@ -37,6 +37,9 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         // --- Items ---
         builder.add(ModItems.SOLAR_LENS, "Solar Lens");
         builder.add(ModItems.ORGANIC_ASH, "Organic Ash");
+        builder.add(ModItems.BIOCOMPOSITE_PASTE, "Biocomposite Paste");
+        builder.add(ModItems.BIOPOLYMER, "Biopolymer");
+
 
         // --- Dynamic Resource Tree Support ---
         for (ResourceTree tree : TreeRegistry.TREES) {

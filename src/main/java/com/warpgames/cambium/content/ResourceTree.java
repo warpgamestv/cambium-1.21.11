@@ -2,26 +2,30 @@ package com.warpgames.cambium.content;
 
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import java.util.function.Supplier;
 
 public class ResourceTree {
     private final String name;
+    private final String modId;
     private final int color;
-    private final Item item;
+    private final Supplier<Item> itemSupplier;
 
     private Block log;
     private Block leaves;
     private Block fruit;
     private Block sapling;
 
-    public ResourceTree(String name, int color, Item item) {
+    public ResourceTree(String name, String modId, int color, Supplier<Item> itemSupplier) {
         this.name = name;
+        this.modId = modId;
         this.color = color;
-        this.item = item;
+        this.itemSupplier = itemSupplier;
     }
 
     public String getName() { return name; }
+    public String getModId() { return modId; }
     public int getColor() { return color; }
-    public Item getItem() { return item; }
+    public Item getItem() { return itemSupplier.get(); }
 
     // --- SETTERS (Fixes ModBlocks error) ---
     public void setLog(Block log) { this.log = log; }

@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "addition": "minecraft:raw_copper",
+  "base": "minecraft:oak_sapling",
+  "result": {
+    "id": "cambium:copper_sapling"
+  },
+  "template": "cambium:organic_ash"
+}

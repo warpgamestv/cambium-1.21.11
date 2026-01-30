@@ -36,6 +36,13 @@ public class ModBlocks {
                     .sound(SoundType.WOOD)
                     .setId(SOLAR_DIGESTER_KEY)));
 
+    public static final ResourceKey<Block> SOLAR_CONCENTRATOR_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrator"));
+    public static final Block SOLAR_CONCENTRATOR = registerBlock("solar_concentrator",
+            new SolarDigesterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
+                    .strength(2.0f)
+                    .sound(SoundType.WOOD)
+                    .setId(SOLAR_CONCENTRATOR_KEY)));
+
     public static final ResourceKey<Block> LIVING_LOG_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "living_log"));
     public static final Block LIVING_LOG = registerBlock("living_log",
             new LivingLogBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_LOG)
@@ -48,6 +55,7 @@ public class ModBlocks {
     public static final Block MINERAL_SOIL = registerBlock("mineral_soil",
             new MineralSoilBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.DIRT)
                     .setId(MINERAL_SOIL_KEY)
+                    .sound(SoundType.GRAVEL)
                     .strength(1.0f)));
 
     public static void registerModBlocks() {

@@ -14,6 +14,9 @@ public class ModItems {
     // We now use a helper that handles the ResourceKey requirement for 1.21+
     public static final Item SOLAR_LENS = registerItem("solar_lens", Item::new, new Item.Properties().stacksTo(1));
     public static final Item ORGANIC_ASH = registerItem("organic_ash", Item::new, new Item.Properties());
+    public static final Item BIOCOMPOSITE_PASTE = registerItem("biocomposite_paste", Item::new, new Item.Properties());
+    public static final Item BIOPOLYMER = registerItem("biopolymer", Item::new, new Item.Properties());
+    public static final Item BIOPOLYMER_CASING = registerItem("biopolymer_casing", Item::new, new Item.Properties());
 
     private static Item registerItem(String name, Function<Item.Properties, Item> factory, Item.Properties properties) {
         // 1. Create the ResourceKey first

@@ -2,7 +2,10 @@
   "values": [
     "cambium:iron_leaves",
     "cambium:gold_leaves",
+    "cambium:copper_leaves",
     "cambium:diamond_leaves",
-    "cambium:emerald_leaves"
+    "cambium:emerald_leaves",
+    "cambium:polymer_leaves",
+    "cambium:vesperite_leaves"
   ]
 }

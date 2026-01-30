@@ -71,4 +71,9 @@ public class MineralSoilBlockEntity extends BlockEntity {
     public CompoundTag getUpdateTag(HolderLookup.Provider registries) {
         return saveWithoutMetadata(registries);
     }
+
+
+    public int getCharge() {
+        return charge;
+    }
 }

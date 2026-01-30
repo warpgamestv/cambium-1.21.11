@@ -32,6 +32,9 @@ public class SplicingRecipeProvider extends FabricRecipeProvider {
 
                 // 2. THE LOOP
                 for (ResourceTree tree : TreeRegistry.TREES) {
+                    if (tree.getItem() == Items.AIR) {
+                        continue;
+                    }
                     SmithingTransformRecipeBuilder.smithing(
                                     ashTemplate,
                                     baseSapling,

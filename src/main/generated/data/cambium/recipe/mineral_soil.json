@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "key": {
+    "A": "cambium:organic_ash",
+    "D": "minecraft:dirt"
+  },
+  "pattern": [
+    "AAA",
+    "ADA",
+    "AAA"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cambium:mineral_soil"
+  }
+}

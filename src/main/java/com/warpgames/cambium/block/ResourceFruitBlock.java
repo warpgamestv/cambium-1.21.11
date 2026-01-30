@@ -65,8 +65,11 @@ public class ResourceFruitBlock extends Block {
         level.removeBlock(pos, false);
 
         // 2. Spawn the Item DYNAMICALLY
-        if (this.tree.getItem() != null) {
-            popResource(level, pos, new ItemStack(this.tree.getItem()));
+        Item itemToDrop = this.tree.getItem(); // This triggers the Supplier lookup
+
+        // SAFETY CHECK: Only drop if the item is not Air (i.e., the mod is installed)
+        if (itemToDrop != null && itemToDrop != Items.AIR) {
+            popResource(level, pos, new ItemStack(itemToDrop));
         }
 
         // 3. Play a sound

@@ -30,6 +30,12 @@ public class ModBlockEntities {
             FabricBlockEntityTypeBuilder.create(RootBlockEntity::new, ModBlocks.ROOT_BLOCK).build(null)
     );
 
+    public static final BlockEntityType<RootBlockEntity> SOLAR_CONCENTRATOR_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("cambium", "solar_concentrator_be"),
+            FabricBlockEntityTypeBuilder.create(RootBlockEntity::new, ModBlocks.SOLAR_CONCENTRATOR).build(null)
+    );
+
     public static void registerBlockEntities() {
         Cambium.LOGGER.info("Registering Block Entities for " + Cambium.MOD_ID);
     }

@@ -68,7 +68,7 @@ public class ModModelProvider extends FabricModelProvider {
             generator.blockStateOutput.accept(MultiVariantGenerator.dispatch(leaves, BlockModelGenerators.plainVariant(leavesModel)));
 
             // B. FRUIT
-            Identifier rawTexture = Identifier.fromNamespaceAndPath("minecraft", "block/" + tree.getName() + "_ore");
+            Identifier rawTexture = Identifier.fromNamespaceAndPath(tree.getModId(), "block/" + tree.getName() + "_ore");
             TextureMapping mapping = new TextureMapping().put(TextureSlot.ALL, rawTexture);
             Identifier model0 = FRUIT_STAGE0.createWithSuffix(fruit, "_stage0", mapping, generator.modelOutput);
             Identifier model1 = FRUIT_STAGE1.createWithSuffix(fruit, "_stage1", mapping, generator.modelOutput);
@@ -93,6 +93,11 @@ public class ModModelProvider extends FabricModelProvider {
 
         itemModelGenerator.generateFlatItem(ModItems.ORGANIC_ASH, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(ModItems.SOLAR_LENS, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(ModItems.BIOCOMPOSITE_PASTE, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(ModItems.BIOPOLYMER, ModelTemplates.FLAT_ITEM);
+        itemModelGenerator.generateFlatItem(ModItems.BIOPOLYMER_CASING, ModelTemplates.FLAT_ITEM);
+
+
 
         itemModelGenerator.itemModelOutput.accept(
                 ModBlocks.ROOT_BLOCK.asItem(),

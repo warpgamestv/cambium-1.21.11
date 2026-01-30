@@ -30,6 +30,8 @@ public class ModItemGroups {
                         entries.accept(ModBlocks.LIVING_LOG);
                         entries.accept(ModItems.SOLAR_LENS);
                         entries.accept(ModItems.ORGANIC_ASH);
+                        entries.accept(ModItems.BIOCOMPOSITE_PASTE);
+                        entries.accept(ModItems.BIOPOLYMER);
                     })
                     .build());
 

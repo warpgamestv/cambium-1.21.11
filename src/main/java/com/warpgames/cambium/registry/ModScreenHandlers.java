@@ -1,6 +1,7 @@
 package com.warpgames.cambium.registry;
 
 import com.warpgames.cambium.Cambium;
+import com.warpgames.cambium.client.screen.SolarConcentratorScreenHandler;
 import com.warpgames.cambium.menu.SolarDigesterMenu;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerType;
 import net.minecraft.core.BlockPos; // Import BlockPos
@@ -19,6 +20,11 @@ public class ModScreenHandlers {
                     BlockPos.STREAM_CODEC
             )
     );
+
+    public static final MenuType<SolarConcentratorScreenHandler> SOLAR_CONCENTRATOR_SCREEN_HANDLER =
+            Registry.register(BuiltInRegistries.MENU,
+                    Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrator"),
+                    new ExtendedScreenHandlerType<>(SolarConcentratorScreenHandler::new, BlockPos.STREAM_CODEC));
 
     public static void registerScreenHandlers() {
         Cambium.LOGGER.info("Registering Screen Handlers for " + Cambium.MOD_ID);
