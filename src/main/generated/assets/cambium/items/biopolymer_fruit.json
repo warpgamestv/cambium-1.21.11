@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "cambium:block/biopolymer_fruit_stage2",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -9811044
+      }
+    ]
+  }
+}

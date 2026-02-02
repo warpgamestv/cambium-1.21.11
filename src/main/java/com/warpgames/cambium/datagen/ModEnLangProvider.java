@@ -24,12 +24,14 @@ public class ModEnLangProvider extends FabricLanguageProvider {
 
         // --- Blocks (Static) ---
         builder.add(ModBlocks.SOLAR_DIGESTER, "Solar Digester");
+        builder.add(ModBlocks.SOLAR_CONCENTRATOR, "Solar Concentrator");
         builder.add(ModBlocks.MINERAL_SOIL, "Mineral Soil");
         builder.add(ModBlocks.LIVING_LOG, "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK, "Root Block");
 
         // 2. Register the ITEM Name
         builder.add(ModBlocks.SOLAR_DIGESTER.asItem(), "Solar Digester");
+        builder.add(ModBlocks.SOLAR_CONCENTRATOR.asItem(), "Solar Concentrator");
         builder.add(ModBlocks.MINERAL_SOIL.asItem(), "Mineral Soil");
         builder.add(ModBlocks.LIVING_LOG.asItem(), "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK.asItem(), "Root Block");
@@ -39,6 +41,8 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModItems.ORGANIC_ASH, "Organic Ash");
         builder.add(ModItems.BIOCOMPOSITE_PASTE, "Biocomposite Paste");
         builder.add(ModItems.BIOPOLYMER, "Biopolymer");
+        builder.add(ModItems.BIOPOLYMER_CASING, "Biopolymer Casing");
+
 
 
         // --- Dynamic Resource Tree Support ---
@@ -61,6 +65,7 @@ public class ModEnLangProvider extends FabricLanguageProvider {
 
         // --- UI / Messages ---
         builder.add("container.solar_digester", "Solar Digester");
+        builder.add("container.solar_concentrator", "Solar Concentrator");
         builder.add("jei.cambium.solar_digesting", "Solar Digesting");
     }
 }

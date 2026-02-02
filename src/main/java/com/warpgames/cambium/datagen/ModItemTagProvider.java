@@ -25,6 +25,12 @@ public class ModItemTagProvider extends FabricTagProvider.ItemTagProvider {
 
         valueLookupBuilder(ItemTags.LOGS)
                 .add(ModBlocks.LIVING_LOG.asItem());
+
+        valueLookupBuilder(ModTags.Items.DIGESTABLE)
+                .forceAddTag(ItemTags.LEAVES)
+                .forceAddTag(ItemTags.SAPLINGS)
+                .forceAddTag(ItemTags.FLOWERS)
+                .forceAddTag(ItemTags.PLANKS);
     }
 
 }

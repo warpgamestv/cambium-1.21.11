@@ -68,11 +68,13 @@ public class ModModelProvider extends FabricModelProvider {
             generator.blockStateOutput.accept(MultiVariantGenerator.dispatch(leaves, BlockModelGenerators.plainVariant(leavesModel)));
 
             // B. FRUIT
-            Identifier rawTexture = Identifier.fromNamespaceAndPath(tree.getModId(), "block/" + tree.getName() + "_ore");
-            TextureMapping mapping = new TextureMapping().put(TextureSlot.ALL, rawTexture);
-            Identifier model0 = FRUIT_STAGE0.createWithSuffix(fruit, "_stage0", mapping, generator.modelOutput);
-            Identifier model1 = FRUIT_STAGE1.createWithSuffix(fruit, "_stage1", mapping, generator.modelOutput);
-            Identifier model2 = FRUIT_STAGE2.createWithSuffix(fruit, "_stage2", mapping, generator.modelOutput);
+            Identifier base0 = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "block/base_fruit_stage0");
+            Identifier base1 = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "block/base_fruit_stage1");
+            Identifier base2 = Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "block/base_fruit_stage2");
+
+            Identifier model0 = FRUIT_STAGE0.createWithSuffix(fruit, "_stage0", new TextureMapping().put(TextureSlot.ALL, base0), generator.modelOutput);
+            Identifier model1 = FRUIT_STAGE1.createWithSuffix(fruit, "_stage1", new TextureMapping().put(TextureSlot.ALL, base1), generator.modelOutput);
+            Identifier model2 = FRUIT_STAGE2.createWithSuffix(fruit, "_stage2", new TextureMapping().put(TextureSlot.ALL, base2), generator.modelOutput);
             generator.blockStateOutput.accept(MultiVariantGenerator.dispatch(fruit)
                     .with(PropertyDispatch.initial(ResourceFruitBlock.AGE)
                             .select(0, BlockModelGenerators.plainVariant(model0))
@@ -125,7 +127,7 @@ public class ModModelProvider extends FabricModelProvider {
             Identifier fruitBlockModel = ModelLocationUtils.getModelLocation(tree.getFruit(), "_stage2");
             itemModelGenerator.itemModelOutput.accept(
                     tree.getFruit().asItem(),
-                    ItemModelUtils.plainModel(fruitBlockModel)
+                    ItemModelUtils.tintedModel(fruitBlockModel, ItemModelUtils.constantTint(tree.getColor()))
             );
 
             // 3. SAPLINGS

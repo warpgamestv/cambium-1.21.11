@@ -1,0 +1,12 @@
+{
+  "model": {
+    "type": "minecraft:model",
+    "model": "cambium:block/redstone_fruit_stage2",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -65536
+      }
+    ]
+  }
+}

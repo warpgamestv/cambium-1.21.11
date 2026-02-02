@@ -13,12 +13,23 @@ public class ModRecipes {
     public static final RecipeSerializer<SolarDigesterRecipe> SOLAR_DIGESTER_SERIALIZER =
             Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_digesting"), new SolarDigesterRecipe.Serializer());
 
+    public static final RecipeSerializer<SolarConcentratorRecipe> SOLAR_CONCENTRATOR_SERIALIZER =
+            Registry.register(BuiltInRegistries.RECIPE_SERIALIZER, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrating"), new SolarConcentratorRecipe.Serializer());
+
     // The Type
     public static final RecipeType<SolarDigesterRecipe> SOLAR_DIGESTER_TYPE =
             Registry.register(BuiltInRegistries.RECIPE_TYPE, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_digesting"), new RecipeType<SolarDigesterRecipe>() {
                 @Override
                 public String toString() {
                     return "solar_digesting";
+                }
+            });
+
+    public static final RecipeType<SolarConcentratorRecipe> SOLAR_CONCENTRATOR_TYPE =
+            Registry.register(BuiltInRegistries.RECIPE_TYPE, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrating"), new RecipeType<SolarConcentratorRecipe>() {
+                @Override
+                public String toString() {
+                    return "solar_concentrating";
                 }
             });
 

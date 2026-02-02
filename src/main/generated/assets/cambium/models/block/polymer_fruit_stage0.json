@@ -1,6 +1,0 @@
-{
-  "parent": "cambium:block/base_fruit_stage0",
-  "textures": {
-    "all": "cambium:block/polymer_ore"
-  }
-}

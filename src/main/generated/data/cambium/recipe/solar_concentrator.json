@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "F": "minecraft:furnace",
+    "G": "minecraft:glass",
+    "P": "cambium:biopolymer_casing"
+  },
+  "pattern": [
+    "GGG",
+    "PFP",
+    "PPP"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cambium:solar_concentrator"
+  }
+}

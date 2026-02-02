@@ -25,6 +25,7 @@ public class ModItemGroups {
                     .displayItems((context, entries) -> {
                         // --- Add your items here ---
                         entries.accept(ModBlocks.SOLAR_DIGESTER);
+                        entries.accept(ModBlocks.SOLAR_CONCENTRATOR);
                         entries.accept(ModBlocks.ROOT_BLOCK);
                         entries.accept(ModBlocks.MINERAL_SOIL);
                         entries.accept(ModBlocks.LIVING_LOG);
@@ -32,6 +33,7 @@ public class ModItemGroups {
                         entries.accept(ModItems.ORGANIC_ASH);
                         entries.accept(ModItems.BIOCOMPOSITE_PASTE);
                         entries.accept(ModItems.BIOPOLYMER);
+                        entries.accept(ModItems.BIOPOLYMER_CASING);
                     })
                     .build());
 

@@ -1,11 +1,17 @@
 // 1.21.11	-999999999-01-01T00:00:00	Cambium/Cambium Splicing Recipes
+6a27cd6440e52ccb126ce2a86a70350bf7039cdd data/cambium/advancement/recipes/misc/splicing/biopolymer_sapling.json
 dce67dda05cb90275114cc07bb31d69a8f55f460 data/cambium/advancement/recipes/misc/splicing/copper_sapling.json
 d75e04bfb0ed2d9e396b73f87d72a084b5e2c617 data/cambium/advancement/recipes/misc/splicing/diamond_sapling.json
 fe4e4e4eb6336243cafbac9da60c030391719647 data/cambium/advancement/recipes/misc/splicing/emerald_sapling.json
 247e5ac055628ff0f0aebea99f61d5b812d61101 data/cambium/advancement/recipes/misc/splicing/gold_sapling.json
 c0eb297fdf0b63c92217dff76be0a28b8c102042 data/cambium/advancement/recipes/misc/splicing/iron_sapling.json
+be05000415b6f67ff95274a2ad430b845e41111f data/cambium/advancement/recipes/misc/splicing/lapis_sapling.json
+f7143cba9f43dfd785dfab897fa727b04f817834 data/cambium/advancement/recipes/misc/splicing/redstone_sapling.json
+5505f0fe75204767ecf924516629429b41da8622 data/cambium/recipe/splicing/biopolymer_sapling.json
 97196a0517305cca96e8687b86e938d638d080eb data/cambium/recipe/splicing/copper_sapling.json
 1e412146de3860adef29bbd1bb19ab6abf66bc56 data/cambium/recipe/splicing/diamond_sapling.json
 74458138a0c77d44a408fc19dc3d25d179adcdfc data/cambium/recipe/splicing/emerald_sapling.json
 ed228b18b915e7aa53ff61f70f4eb52b24bd0dfd data/cambium/recipe/splicing/gold_sapling.json
 b20e92217d77e1af5558655b3e2790149bbd5bf3 data/cambium/recipe/splicing/iron_sapling.json
+066915ff9187284295030abb50ab25b5c380c493 data/cambium/recipe/splicing/lapis_sapling.json
+12e3b69805e0e71d4d1a77818004a1706264df5b data/cambium/recipe/splicing/redstone_sapling.json

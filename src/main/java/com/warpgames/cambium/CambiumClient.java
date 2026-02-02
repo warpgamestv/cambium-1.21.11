@@ -1,5 +1,6 @@
 package com.warpgames.cambium;
 
+import com.warpgames.cambium.client.screen.SolarConcentratorScreen;
 import com.warpgames.cambium.client.screen.SolarDigesterScreen;
 import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlocks;
@@ -48,7 +49,7 @@ public class CambiumClient implements ClientModInitializer {
 
             // --- C. FRUIT ---
             if (fruit != null) {
-                BlockRenderLayerMap.putBlock(fruit, ChunkSectionLayer.CUTOUT);
+                ColorProviderRegistry.BLOCK.register((state, view, pos, tintIndex) -> tree.getColor(), fruit);
             }
         }
 
@@ -57,5 +58,6 @@ public class CambiumClient implements ClientModInitializer {
         BlockRenderLayerMap.putBlock(ModBlocks.MINERAL_SOIL, ChunkSectionLayer.CUTOUT);
 
         MenuScreens.register(ModScreenHandlers.SOLAR_DIGESTER_MENU, SolarDigesterScreen::new);
+        MenuScreens.register(ModScreenHandlers.SOLAR_CONCENTRATOR_SCREEN_HANDLER, SolarConcentratorScreen::new);
     }
 }

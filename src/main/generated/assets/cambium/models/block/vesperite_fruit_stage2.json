@@ -1,6 +1,6 @@
 {
   "parent": "cambium:block/base_fruit_stage2",
   "textures": {
-    "all": "vesper_wilds:block/vesperite_ore"
+    "all": "cambium:block/base_fruit_stage2"
   }
 }

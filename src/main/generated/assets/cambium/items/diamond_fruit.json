@@ -1,6 +1,12 @@
 {
   "model": {
     "type": "minecraft:model",
-    "model": "cambium:block/diamond_fruit_stage2"
+    "model": "cambium:block/diamond_fruit_stage2",
+    "tints": [
+      {
+        "type": "minecraft:constant",
+        "value": -5651040
+      }
+    ]
   }
 }

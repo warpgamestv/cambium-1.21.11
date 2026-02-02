@@ -2,6 +2,7 @@ package com.warpgames.cambium.datagen;
 
 import com.warpgames.cambium.registry.ModBlocks;
 import com.warpgames.cambium.registry.ModItems;
+import com.warpgames.cambium.registry.ModTags;
 import net.fabricmc.fabric.api.datagen.v1.FabricDataOutput;
 import net.fabricmc.fabric.api.datagen.v1.provider.FabricRecipeProvider;
 import net.minecraft.core.HolderLookup;
@@ -28,32 +29,30 @@ public class ModRecipeProvider extends FabricRecipeProvider {
         return new RecipeProvider(registries, output) {
             @Override
             public void buildRecipes() {
-
-                ResourceKey<Recipe<?>> customKey = ResourceKey.create(
-                        Registries.RECIPE,
-                        Identifier.fromNamespaceAndPath("cambium", "solar_digesting/charcoal_from_logs")
-                );
-
-                SolarDigesterRecipeBuilder.digester(this.tag(ItemTags.LOGS), Items.CHARCOAL, 1)
-                        .byproduct(ModItems.ORGANIC_ASH, 1, 0.50f)
-                        .time(200)
+                //Solar Digester Recipes
+                SolarDigesterRecipeBuilder.digester(this.tag(ModTags.Items.DIGESTABLE), ModItems.ORGANIC_ASH, 1)
+                        .byproduct(ModItems.ORGANIC_ASH, 1, 0.25f)
+                        .time(150)
                         .xp(1.0f)
                         .unlockedBy("has_logs", this.has(ItemTags.LOGS))
-                        .save(this.output, customKey);
+                        .save(this.output);
 
-                //Example: Sand -> Glass
-                ResourceKey<Recipe<?>> glassKey = ResourceKey.create(
-                        Registries.RECIPE,
-                        Identifier.fromNamespaceAndPath("cambium", "solar_digesting/glass_from_sand")
-                );
-
-                SolarDigesterRecipeBuilder.digester(Items.SAND, Items.GLASS, 1)
-                        .time(100)
+                //Solar Concentrator Recipes
+                SolarConcentratorRecipeBuilder.concentrator(Items.SAND, Items.GLASS, 1)
+                        .time(75)
                         .xp(0.1f)
                         .requiresLens()
                         .unlockedBy("has_sand", this.has(Items.SAND))
-                        .save(this.output, glassKey);
+                        .save(this.output);
 
+                SolarConcentratorRecipeBuilder.concentrator(ModItems.BIOCOMPOSITE_PASTE, ModItems.BIOPOLYMER, 1)
+                                .time(75)
+                                .xp(0.1f)
+                                .requiresLens()
+                                .unlockedBy("has_biocomposite_paste", this.has(ModItems.BIOCOMPOSITE_PASTE))
+                                .save(this.output);
+
+                //Crafting Table Recipes
                 shaped(RecipeCategory.MISC, ModBlocks.SOLAR_DIGESTER)
                         .pattern("GGG")
                         .pattern("BCB")
@@ -63,6 +62,16 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                         .define('C', Items.COMPOSTER)
                         .define('B', Items.COPPER_INGOT)
                         .unlockedBy("has_composter", has(Items.COMPOSTER))
+                        .save(this.output);
+
+                shaped(RecipeCategory.MISC, ModBlocks.SOLAR_CONCENTRATOR)
+                        .pattern("GGG")
+                        .pattern("PFP")
+                        .pattern("PPP")
+                        .define('G', Items.GLASS)
+                        .define('F', Items.FURNACE)
+                        .define('P', ModItems.BIOPOLYMER_CASING)
+                        .unlockedBy("has_furnace", has(Items.FURNACE))
                         .save(this.output);
 
                 shaped(RecipeCategory.MISC, ModItems.SOLAR_LENS)

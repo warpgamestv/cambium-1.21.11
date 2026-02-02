@@ -9,6 +9,8 @@ import net.minecraft.world.item.Item;
 public class ModTags {
     public static class Items {
         public static final TagKey<Item> LENS = createTag("lens");
+        public static final TagKey<Item> DIGESTABLE = createTag("digestable");
+
 
         private static TagKey<Item> createTag(String name) {
             return TagKey.create(Registries.ITEM, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, name));

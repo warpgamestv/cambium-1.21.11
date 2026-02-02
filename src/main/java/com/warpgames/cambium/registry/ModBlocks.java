@@ -38,7 +38,7 @@ public class ModBlocks {
 
     public static final ResourceKey<Block> SOLAR_CONCENTRATOR_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrator"));
     public static final Block SOLAR_CONCENTRATOR = registerBlock("solar_concentrator",
-            new SolarDigesterBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
+            new SolarConcentratorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
                     .strength(2.0f)
                     .sound(SoundType.WOOD)
                     .setId(SOLAR_CONCENTRATOR_KEY)));

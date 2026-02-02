@@ -1,6 +1,7 @@
 package com.warpgames.cambium.block.entity;
 
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.warpgames.cambium.block.ResourceFruitBlock;
 import com.warpgames.cambium.content.ResourceTree;
 import com.warpgames.cambium.registry.ModBlockEntities;
@@ -15,8 +16,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.LeavesBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.storage.ValueInput;
-import net.minecraft.world.level.storage.ValueOutput;
+import net.minecraft.world.level.storage.ValueInput; // Keep these imports!
+import net.minecraft.world.level.storage.ValueOutput; // Keep these imports!
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +28,52 @@ public class RootBlockEntity extends BlockEntity {
     private int growthIndex = 0;
     private String treeType = "";
 
-    private final List<BuildStep> buildPlan = new ArrayList<>();
+    // The "Brain" of the tree
+    private List<BuildStep> buildPlan = new ArrayList<>();
     private boolean isPlanGenerated = false;
 
     public RootBlockEntity(BlockPos pos, BlockState state) {
         super(ModBlockEntities.ROOT_BE, pos, state);
     }
 
-    // --- GETTERS & SETTERS ---
+    // --- SAVING & LOADING (Codec System) ---
+    // This matches the system used in your MineralSoilBlockEntity
+
+    @Override
+    protected void saveAdditional(ValueOutput output) {
+        super.saveAdditional(output);
+        output.store("TreeType", Codec.STRING, this.treeType);
+        output.store("GrowthIndex", Codec.INT, this.growthIndex);
+        output.store("IsPlanGenerated", Codec.BOOL, this.isPlanGenerated);
+        output.store("Timer", Codec.INT, this.timer);
+
+        // SAVE THE PLAN: Use the Codec to save the whole list at once
+        output.store("BuildPlan", BuildStep.CODEC.listOf(), this.buildPlan);
+    }
+
+    @Override
+    protected void loadAdditional(ValueInput input) {
+        super.loadAdditional(input);
+        this.treeType = input.read("TreeType", Codec.STRING).orElse("");
+        this.growthIndex = input.read("GrowthIndex", Codec.INT).orElse(0);
+        this.isPlanGenerated = input.read("IsPlanGenerated", Codec.BOOL).orElse(false);
+        this.timer = input.read("Timer", Codec.INT).orElse(0);
+
+        // LOAD THE PLAN: Read the list back into memory
+        this.buildPlan = input.read("BuildPlan", BuildStep.CODEC.listOf()).orElse(new ArrayList<>());
+    }
+
+    // --- BUILD STEP RECORD WITH CODEC ---
+    public record BuildStep(Vec3i offset, BlockState state) {
+        // This tells the game how to turn this object into data
+        public static final Codec<BuildStep> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+                Vec3i.CODEC.fieldOf("offset").forGetter(BuildStep::offset),
+                BlockState.CODEC.fieldOf("state").forGetter(BuildStep::state)
+        ).apply(instance, BuildStep::new));
+    }
+
+    // --- STANDARD LOGIC (Unchanged) ---
+
     public void setTreeType(String name) {
         this.treeType = name;
         setChanged();
@@ -47,14 +86,12 @@ public class RootBlockEntity extends BlockEntity {
                 .orElse(TreeRegistry.IRON);
     }
 
-    // --- SOIL CHECK (Restored!) ---
     private boolean hasValidSoil(Level level, BlockPos pos) {
         BlockPos soilPos = pos.below();
         BlockState soilState = level.getBlockState(soilPos);
         return soilState.is(ModBlocks.MINERAL_SOIL);
     }
 
-    // --- THE GENERATOR ---
     private void generateTree() {
         long seed = this.worldPosition.asLong();
         RandomSource random = RandomSource.create(seed);
@@ -120,11 +157,9 @@ public class RootBlockEntity extends BlockEntity {
         buildPlan.add(new BuildStep(offset, state));
     }
 
-    // --- THE TICKER ---
     public static void tick(Level level, BlockPos pos, BlockState state, RootBlockEntity entity) {
         if (level.isClientSide()) return;
 
-        // 1. GENERATION PHASE (Unchanged)
         if (!entity.isPlanGenerated) {
             if (entity.hasValidSoil(level, pos)) {
                 entity.generateTree();
@@ -134,31 +169,25 @@ public class RootBlockEntity extends BlockEntity {
             return;
         }
 
-        // 2. PRODUCTION PHASE (The Fruit Loop)
+        // Regrowth Logic
         if (entity.growthIndex >= entity.buildPlan.size()) {
-
             entity.timer++;
             if (entity.timer >= 20) {
                 ResourceTree treeDef = entity.getTree();
 
+                // Because we fixed Loading, this loop will now work after a reload!
                 for (BuildStep step : entity.buildPlan) {
                     if (step.state().getBlock() == treeDef.getFruit()) {
-
                         BlockPos fruitPos = pos.offset(step.offset());
                         BlockState currentBlock = level.getBlockState(fruitPos);
 
-                        // LOGIC: Random Chance -> Check Charge -> Action
                         if (level.random.nextInt(10) == 0) {
-
-                            // A. REGROWTH (Air -> Stage 0)
                             if (level.isEmptyBlock(fruitPos)) {
                                 if (entity.tryUseSoilCharge(level, pos)) {
                                     level.setBlock(fruitPos, treeDef.getFruit().defaultBlockState().setValue(ResourceFruitBlock.AGE, 0), 3);
-                                    level.levelEvent(2005, fruitPos, 0); // Bonemeal sound
+                                    level.levelEvent(2005, fruitPos, 0);
                                 }
-                            }
-                            // B. AGING (Stage 0 -> 1 -> 2 -> Drop)
-                            else if (currentBlock.getBlock() == treeDef.getFruit()) {
+                            } else if (currentBlock.getBlock() == treeDef.getFruit()) {
                                 int age = currentBlock.getValue(ResourceFruitBlock.AGE);
                                 if (age < 2) {
                                     if (entity.tryUseSoilCharge(level, pos)) {
@@ -178,38 +207,24 @@ public class RootBlockEntity extends BlockEntity {
             return;
         }
 
-        // 3. GROWTH ANIMATION PHASE
+        // Growth Animation
         entity.timer++;
         if (entity.timer >= 5) {
-            BuildStep step = entity.buildPlan.get(entity.growthIndex);
-            BlockPos targetPos = pos.offset(step.offset());
-            if (level.isEmptyBlock(targetPos)) {
-                level.setBlock(targetPos, step.state(), 3);
-                level.levelEvent(2001, targetPos, net.minecraft.world.level.block.Block.getId(step.state()));
-                if (step.state().getBlock() instanceof LeavesBlock) {
-                    level.scheduleTick(targetPos, step.state().getBlock(), 1);
+            if (entity.growthIndex < entity.buildPlan.size()) {
+                BuildStep step = entity.buildPlan.get(entity.growthIndex);
+                BlockPos targetPos = pos.offset(step.offset());
+                if (level.isEmptyBlock(targetPos)) {
+                    level.setBlock(targetPos, step.state(), 3);
+                    level.levelEvent(2001, targetPos, net.minecraft.world.level.block.Block.getId(step.state()));
+                    if (step.state().getBlock() instanceof LeavesBlock) {
+                        level.scheduleTick(targetPos, step.state().getBlock(), 1);
+                    }
                 }
+                entity.growthIndex++;
+                entity.timer = 0;
+                entity.setChanged();
             }
-            entity.growthIndex++;
-            entity.timer = 0;
         }
-    }
-
-    // --- SAVING & LOADING ---
-    @Override
-    protected void saveAdditional(ValueOutput output) {
-        super.saveAdditional(output);
-        output.store("TreeType", Codec.STRING, this.treeType);
-        output.store("GrowthIndex", Codec.INT, this.growthIndex);
-        output.store("IsPlanGenerated", Codec.BOOL, this.isPlanGenerated);
-    }
-
-    @Override
-    protected void loadAdditional(ValueInput input) {
-        super.loadAdditional(input);
-        this.treeType = input.read("TreeType", Codec.STRING).orElse("");
-        this.growthIndex = input.read("GrowthIndex", Codec.INT).orElse(0);
-        this.isPlanGenerated = input.read("IsPlanGenerated", Codec.BOOL).orElse(false);
     }
 
     private boolean tryUseSoilCharge(Level level, BlockPos rootPos) {
@@ -219,6 +234,4 @@ public class RootBlockEntity extends BlockEntity {
         }
         return false;
     }
-
-    record BuildStep(Vec3i offset, BlockState state){}
 }

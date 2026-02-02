@@ -3,6 +3,7 @@ package com.warpgames.cambium.registry;
 import com.warpgames.cambium.Cambium;
 import com.warpgames.cambium.block.entity.MineralSoilBlockEntity;
 import com.warpgames.cambium.block.entity.RootBlockEntity;
+import com.warpgames.cambium.block.entity.SolarConcentratorBlockEntity;
 import com.warpgames.cambium.block.entity.SolarDigesterBlockEntity; // Make sure this is imported!
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
@@ -30,10 +31,10 @@ public class ModBlockEntities {
             FabricBlockEntityTypeBuilder.create(RootBlockEntity::new, ModBlocks.ROOT_BLOCK).build(null)
     );
 
-    public static final BlockEntityType<RootBlockEntity> SOLAR_CONCENTRATOR_BE = Registry.register(
+    public static final BlockEntityType<SolarConcentratorBlockEntity> SOLAR_CONCENTRATOR_BE = Registry.register(
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("cambium", "solar_concentrator_be"),
-            FabricBlockEntityTypeBuilder.create(RootBlockEntity::new, ModBlocks.SOLAR_CONCENTRATOR).build(null)
+            FabricBlockEntityTypeBuilder.create(SolarConcentratorBlockEntity::new, ModBlocks.SOLAR_CONCENTRATOR).build(null)
     );
 
     public static void registerBlockEntities() {
