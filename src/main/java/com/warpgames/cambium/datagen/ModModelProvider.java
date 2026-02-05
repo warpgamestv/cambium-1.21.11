@@ -49,11 +49,12 @@ public class ModModelProvider extends FabricModelProvider {
         generator.blockStateOutput.accept(BlockModelGenerators.createSimpleBlock(ModBlocks.ROOT_BLOCK, BlockModelGenerators.plainVariant(rootModel)));
 
         // --- 2. MINERAL SOIL ---
-        // Keeps the trivial cube logic (same texture on all sides)
         generator.createTrivialCube(ModBlocks.MINERAL_SOIL);
 
         // --- 3. LOGS ---
         generator.woodProvider(ModBlocks.LIVING_LOG).logWithHorizontal(ModBlocks.LIVING_LOG);
+
+        generator.createTrivialCube(ModBlocks.GRAVITROPIC_NODE);
 
         // --- 4. DYNAMIC TREES ---
         for (ResourceTree tree : TreeRegistry.TREES) {
@@ -98,8 +99,7 @@ public class ModModelProvider extends FabricModelProvider {
         itemModelGenerator.generateFlatItem(ModItems.BIOCOMPOSITE_PASTE, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(ModItems.BIOPOLYMER, ModelTemplates.FLAT_ITEM);
         itemModelGenerator.generateFlatItem(ModItems.BIOPOLYMER_CASING, ModelTemplates.FLAT_ITEM);
-
-
+        itemModelGenerator.generateFlatItem(ModItems.GRAFTING_TOOL, ModelTemplates.FLAT_ITEM);
 
         itemModelGenerator.itemModelOutput.accept(
                 ModBlocks.ROOT_BLOCK.asItem(),

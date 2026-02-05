@@ -21,6 +21,10 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         dropSelf(ModBlocks.ROOT_BLOCK);
         dropSelf(ModBlocks.MINERAL_SOIL);
         dropSelf(ModBlocks.LIVING_LOG);
+        dropSelf(ModBlocks.GRAVITROPIC_NODE);
+        dropSelf(ModBlocks.PHLOEM_DUCT);
+
+        // 2. Dynamic Blocks
 
         add(ModBlocks.SOLAR_DIGESTER, createNameableBlockEntityTable(ModBlocks.SOLAR_DIGESTER));
         add(ModBlocks.SOLAR_CONCENTRATOR, createNameableBlockEntityTable(ModBlocks.SOLAR_CONCENTRATOR));

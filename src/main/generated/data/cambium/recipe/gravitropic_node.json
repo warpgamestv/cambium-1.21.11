@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": "cambium:biopolymer_casing",
+    "E": "minecraft:ender_pearl",
+    "L": "minecraft:lapis_lazuli",
+    "R": "minecraft:redstone"
+  },
+  "pattern": [
+    "BRB",
+    "LEL",
+    "BRB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cambium:gravitropic_node"
+  }
+}

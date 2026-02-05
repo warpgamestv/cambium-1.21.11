@@ -56,6 +56,8 @@ public class CambiumClient implements ClientModInitializer {
         // Static Blocks
         BlockRenderLayerMap.putBlock(ModBlocks.ROOT_BLOCK, ChunkSectionLayer.CUTOUT);
         BlockRenderLayerMap.putBlock(ModBlocks.MINERAL_SOIL, ChunkSectionLayer.CUTOUT);
+        BlockRenderLayerMap.putBlock(ModBlocks.PHLOEM_DUCT, ChunkSectionLayer.CUTOUT);
+
 
         MenuScreens.register(ModScreenHandlers.SOLAR_DIGESTER_MENU, SolarDigesterScreen::new);
         MenuScreens.register(ModScreenHandlers.SOLAR_CONCENTRATOR_SCREEN_HANDLER, SolarConcentratorScreen::new);

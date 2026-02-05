@@ -75,6 +75,17 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                         .unlockedBy("has_furnace", has(Items.FURNACE))
                         .save(this.output);
 
+                shaped(RecipeCategory.MISC, ModBlocks.GRAVITROPIC_NODE)
+                        .pattern("BRB")
+                        .pattern("LEL")
+                        .pattern("BRB")
+                        .define('B', ModItems.BIOPOLYMER_CASING)
+                        .define('R', Items.REDSTONE)
+                        .define('L', Items.LAPIS_LAZULI)
+                        .define('E', Items.ENDER_PEARL)
+                        .unlockedBy("has_biopolymer_casing", has(ModItems.BIOPOLYMER_CASING))
+                        .save(this.output);
+
                 shaped(RecipeCategory.MISC, ModItems.SOLAR_LENS)
                         .pattern(" G ")
                         .pattern("GPG")

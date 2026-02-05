@@ -2,6 +2,7 @@ package com.warpgames.cambium.registry;
 
 import com.warpgames.cambium.Cambium;
 import com.warpgames.cambium.block.*;
+import com.warpgames.cambium.block.transport.PhloemDuctBlock;
 import com.warpgames.cambium.content.ResourceTree;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 // NEW IMPORTS FOR DATA COMPONENTS
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.component.DyedItemColor;
+import net.minecraft.world.level.material.MapColor;
 
 public class ModBlocks {
 
@@ -64,6 +66,17 @@ public class ModBlocks {
                     .setId(MINERAL_SOIL_KEY)
                     .sound(SoundType.GRAVEL)
                     .strength(1.0f)));
+
+    public static final ResourceKey<Block> PHLOEM_DUCT_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "phloem_duct"));
+    public static final Block PHLOEM_DUCT = registerBlock("phloem_duct",
+            new PhloemDuctBlock(BlockBehaviour.Properties.of()
+                    .setId(PHLOEM_DUCT_KEY)
+                    .mapColor(MapColor.WOOD)       // Map color
+                    .strength(2.0f)                // Hardness (like wood)
+                    .sound(SoundType.WOOD)         // Sound when walking/breaking
+                    .noOcclusion()                 // CRITICAL: Tells game it's not a full solid cube
+                    .isRedstoneConductor((state, world, pos) -> false) // Prevent it from transmitting redstone power physically
+            ));
 
     public static void registerModBlocks() {
         Cambium.LOGGER.info("Registering Mod Blocks for " + Cambium.MOD_ID);

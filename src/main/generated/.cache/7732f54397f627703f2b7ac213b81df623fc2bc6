@@ -14,6 +14,7 @@ b9483e84d3705998cbc10fe304a0a9b18f015682 data/cambium/loot_table/blocks/emerald_
 e00db7d59b777ee5d8d40a952fee1cb1b38b7f7c data/cambium/loot_table/blocks/gold_fruit.json
 89581af344a5bde4f0b6914f79de669bc2f09e12 data/cambium/loot_table/blocks/gold_leaves.json
 858f52d7a643f7d37a76a5ac72fbf0da208b3d5d data/cambium/loot_table/blocks/gold_sapling.json
+efc3118c8abe8d253a73b16ff28fd6599932f15c data/cambium/loot_table/blocks/gravitropic_node.json
 644dde08486a204424f6782fce754f96544cbd1f data/cambium/loot_table/blocks/iron_fruit.json
 ef5770a23425e9ef1effcb64c9f295322aad8e33 data/cambium/loot_table/blocks/iron_leaves.json
 c273c858e1575b3b6db557650fa7877f9cb82645 data/cambium/loot_table/blocks/iron_sapling.json
@@ -22,6 +23,7 @@ c273c858e1575b3b6db557650fa7877f9cb82645 data/cambium/loot_table/blocks/iron_sap
 bdb3affa38f4bceb036649b97350e09823ed2cd6 data/cambium/loot_table/blocks/lapis_sapling.json
 011707bde20fcf50030137dc643aa6ac875e13b8 data/cambium/loot_table/blocks/living_log.json
 046904e4b438a4467a96a9b171c842a2ce5c2df6 data/cambium/loot_table/blocks/mineral_soil.json
+f34fa5a2713896f2cbf64c05b3939049fb8b9ed2 data/cambium/loot_table/blocks/phloem_duct.json
 07c9b559e9c69a8b147b29607e8b6992c87d10d8 data/cambium/loot_table/blocks/redstone_fruit.json
 57f062f065e18b47ea69bdac728782fcac4b626f data/cambium/loot_table/blocks/redstone_leaves.json
 cec79fb081aa3dd654f5ec75033021019ee4edd7 data/cambium/loot_table/blocks/redstone_sapling.json

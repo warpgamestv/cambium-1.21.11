@@ -28,6 +28,10 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.MINERAL_SOIL, "Mineral Soil");
         builder.add(ModBlocks.LIVING_LOG, "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK, "Root Block");
+        builder.add(ModBlocks.GRAVITROPIC_NODE, "Gravitropic Node");
+        builder.add(ModBlocks.PHLOEM_DUCT, "Phloem Duct");
+
+
 
         // 2. Register the ITEM Name
         builder.add(ModBlocks.SOLAR_DIGESTER.asItem(), "Solar Digester");
@@ -35,6 +39,11 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.MINERAL_SOIL.asItem(), "Mineral Soil");
         builder.add(ModBlocks.LIVING_LOG.asItem(), "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK.asItem(), "Root Block");
+        builder.add(ModBlocks.GRAVITROPIC_NODE.asItem(), "Gravitropic Node");
+        builder.add(ModBlocks.PHLOEM_DUCT.asItem(), "Phloem Duct");
+
+
+
 
         // --- Items ---
         builder.add(ModItems.SOLAR_LENS, "Solar Lens");
@@ -42,6 +51,8 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModItems.BIOCOMPOSITE_PASTE, "Biocomposite Paste");
         builder.add(ModItems.BIOPOLYMER, "Biopolymer");
         builder.add(ModItems.BIOPOLYMER_CASING, "Biopolymer Casing");
+        builder.add(ModItems.GRAFTING_TOOL, "Grafting Tool");
+
 
 
 

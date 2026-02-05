@@ -73,6 +73,7 @@ public class GravitropicNodeBlockEntity extends BlockEntity implements Implement
     // --- Custom Helper to Insert Items ---
     public ItemStack addItem(ItemStack stack) {
         ItemStack copy = stack.copy();
+        boolean didChange = false; // Track if we touched the inventory
 
         // 1. Try to merge with existing stacks
         for (ItemStack slot : inventory) {
@@ -84,20 +85,30 @@ public class GravitropicNodeBlockEntity extends BlockEntity implements Implement
                     int add = Math.min(copy.getCount(), space);
                     slot.grow(add);
                     copy.shrink(add);
-                    if (copy.isEmpty()) return ItemStack.EMPTY;
+                    didChange = true; // We modified a slot
+
+                    if (copy.isEmpty()) break; // Done merging
                 }
             }
         }
 
-        // 2. Try to put in empty slots
-        for (int i = 0; i < inventory.size(); i++) {
-            if (inventory.get(i).isEmpty()) {
-                inventory.set(i, copy.copy());
-                return ItemStack.EMPTY;
+        // 2. If we still have items, try to put in empty slots
+        if (!copy.isEmpty()) {
+            for (int i = 0; i < inventory.size(); i++) {
+                if (inventory.get(i).isEmpty()) {
+                    inventory.set(i, copy.copy());
+                    copy.setCount(0); // All gone
+                    didChange = true; // We filled a slot
+                    break;
+                }
             }
         }
 
-        // Return whatever couldn't fit
+        // 3. IMPORTANT: If anything changed, mark the block as dirty so it saves!
+        if (didChange) {
+            setChanged();
+        }
+
         return copy;
     }
 
