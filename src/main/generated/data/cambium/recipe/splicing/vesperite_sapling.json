@@ -1,9 +1,9 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": "#cambium:biopolymer",
+  "addition": "#c:raw_materials/vesperite",
   "base": "minecraft:oak_sapling",
   "result": {
-    "id": "cambium:biopolymer_sapling"
+    "id": "cambium:vesperite_sapling"
   },
   "template": "cambium:organic_ash"
 }

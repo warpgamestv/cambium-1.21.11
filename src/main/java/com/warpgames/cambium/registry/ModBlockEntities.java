@@ -1,10 +1,7 @@
 package com.warpgames.cambium.registry;
 
 import com.warpgames.cambium.Cambium;
-import com.warpgames.cambium.block.entity.MineralSoilBlockEntity;
-import com.warpgames.cambium.block.entity.RootBlockEntity;
-import com.warpgames.cambium.block.entity.SolarConcentratorBlockEntity;
-import com.warpgames.cambium.block.entity.SolarDigesterBlockEntity; // Make sure this is imported!
+import com.warpgames.cambium.block.entity.*;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -35,6 +32,12 @@ public class ModBlockEntities {
             BuiltInRegistries.BLOCK_ENTITY_TYPE,
             Identifier.fromNamespaceAndPath("cambium", "solar_concentrator_be"),
             FabricBlockEntityTypeBuilder.create(SolarConcentratorBlockEntity::new, ModBlocks.SOLAR_CONCENTRATOR).build(null)
+    );
+
+    public static final BlockEntityType<GravitropicNodeBlockEntity> GRAVITROPIC_NODE_BE = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("cambium", "gravitropic_node_be"),
+            FabricBlockEntityTypeBuilder.create(GravitropicNodeBlockEntity::new, ModBlocks.GRAVITROPIC_NODE).build(null)
     );
 
     public static void registerBlockEntities() {

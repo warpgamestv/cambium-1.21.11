@@ -1,6 +1,6 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": "minecraft:diamond",
+  "addition": "#c:gems/diamond",
   "base": "minecraft:oak_sapling",
   "result": {
     "id": "cambium:diamond_sapling"

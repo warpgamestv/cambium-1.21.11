@@ -66,10 +66,11 @@ public class ModRecipeProvider extends FabricRecipeProvider {
 
                 shaped(RecipeCategory.MISC, ModBlocks.SOLAR_CONCENTRATOR)
                         .pattern("GGG")
-                        .pattern("PFP")
+                        .pattern("CFC")
                         .pattern("PPP")
                         .define('G', Items.GLASS)
                         .define('F', Items.FURNACE)
+                        .define('C', Items.COPPER_INGOT)
                         .define('P', ModItems.BIOPOLYMER_CASING)
                         .unlockedBy("has_furnace", has(Items.FURNACE))
                         .save(this.output);

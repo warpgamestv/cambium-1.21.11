@@ -1,6 +1,6 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": "minecraft:redstone",
+  "addition": "#c:dusts/redstone",
   "base": "minecraft:oak_sapling",
   "result": {
     "id": "cambium:redstone_sapling"

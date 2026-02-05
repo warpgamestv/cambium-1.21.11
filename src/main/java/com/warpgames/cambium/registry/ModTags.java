@@ -10,6 +10,8 @@ public class ModTags {
     public static class Items {
         public static final TagKey<Item> LENS = createTag("lens");
         public static final TagKey<Item> DIGESTABLE = createTag("digestable");
+        public static final TagKey<Item> BIOPOLYMER = createTag("biopolymer");
+
 
 
         private static TagKey<Item> createTag(String name) {

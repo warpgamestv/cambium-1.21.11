@@ -1,6 +1,6 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": "minecraft:raw_copper",
+  "addition": "#c:raw_materials/copper",
   "base": "minecraft:oak_sapling",
   "result": {
     "id": "cambium:copper_sapling"

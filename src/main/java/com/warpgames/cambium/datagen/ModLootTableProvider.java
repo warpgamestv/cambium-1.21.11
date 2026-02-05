@@ -23,15 +23,28 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         dropSelf(ModBlocks.LIVING_LOG);
 
         add(ModBlocks.SOLAR_DIGESTER, createNameableBlockEntityTable(ModBlocks.SOLAR_DIGESTER));
+        add(ModBlocks.SOLAR_CONCENTRATOR, createNameableBlockEntityTable(ModBlocks.SOLAR_CONCENTRATOR));
 
         // Dynamic Resource Tree Drops
         for (ResourceTree tree : TreeRegistry.TREES) {
+
+            // LEAVES: Use "Oak-like" drops (Sticks + Rare Sapling + Silk Touch Self)
             if (tree.getLeaves() != null) {
-                dropSelf(tree.getLeaves());
+                // Standard Vanilla Rates: 5%, 6.25%, 8.33%, 10% based on Fortune level
+                add(tree.getLeaves(), block -> createLeavesDrops(
+                        block,
+                        tree.getSapling(),
+                        0.05f, 0.0625f, 0.083333336f, 0.1f
+                ));
             }
+
             if (tree.getFruit() != null) {
                 // Fruit drops itself
                 dropSelf(tree.getFruit());
+            }
+
+            if (tree.getSapling() != null) {
+                dropSelf(tree.getSapling());
             }
         }
     }

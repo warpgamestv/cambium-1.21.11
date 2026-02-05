@@ -1,6 +1,6 @@
 {
   "type": "minecraft:smithing_transform",
-  "addition": "minecraft:lapis_lazuli",
+  "addition": "#c:gems/lapis",
   "base": "minecraft:oak_sapling",
   "result": {
     "id": "cambium:lapis_sapling"

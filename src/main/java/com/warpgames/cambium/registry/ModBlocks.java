@@ -38,10 +38,17 @@ public class ModBlocks {
 
     public static final ResourceKey<Block> SOLAR_CONCENTRATOR_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "solar_concentrator"));
     public static final Block SOLAR_CONCENTRATOR = registerBlock("solar_concentrator",
-            new SolarConcentratorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.OAK_WOOD)
+            new SolarConcentratorBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
                     .strength(2.0f)
-                    .sound(SoundType.WOOD)
+                    .sound(SoundType.IRON)
                     .setId(SOLAR_CONCENTRATOR_KEY)));
+
+    public static final ResourceKey<Block> GRAVITROPIC_NODE_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "gravitropic_node"));
+    public static final Block GRAVITROPIC_NODE = registerBlock("gravitropic_node",
+            new GravitropicNodeBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.IRON_BLOCK)
+                    .strength(2.0f)
+                    .sound(SoundType.IRON)
+                    .setId(GRAVITROPIC_NODE_KEY)));
 
     public static final ResourceKey<Block> LIVING_LOG_KEY = ResourceKey.create(Registries.BLOCK, Identifier.fromNamespaceAndPath(Cambium.MOD_ID, "living_log"));
     public static final Block LIVING_LOG = registerBlock("living_log",
