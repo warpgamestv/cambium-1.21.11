@@ -86,6 +86,15 @@ public class ModRecipeProvider extends FabricRecipeProvider {
                         .unlockedBy("has_biopolymer_casing", has(ModItems.BIOPOLYMER_CASING))
                         .save(this.output);
 
+                shaped(RecipeCategory.MISC, ModBlocks.PHLOEM_DUCT)
+                        .pattern("PPP")
+                        .pattern("PGP")
+                        .pattern("PPP")
+                        .define('P', ModItems.BIOPOLYMER)
+                        .define('G', Items.GLASS_PANE)
+                        .unlockedBy("has_polymer", has(ModItems.BIOPOLYMER))
+                        .save(this.output);
+
                 shaped(RecipeCategory.MISC, ModItems.SOLAR_LENS)
                         .pattern(" G ")
                         .pattern("GPG")

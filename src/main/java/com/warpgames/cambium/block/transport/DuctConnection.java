@@ -3,9 +3,9 @@ package com.warpgames.cambium.block.transport;
 import net.minecraft.util.StringRepresentable;
 
 public enum DuctConnection implements StringRepresentable {
-    NONE("none"),       // No connection
-    NORMAL("normal"),   // Standard passive tube
-    EXTRACT("extract"); // Pumping/Pulling mode (Input)
+    NONE("none"),
+    NORMAL("normal"),
+    EXTRACT("extract");
 
     private final String name;
 

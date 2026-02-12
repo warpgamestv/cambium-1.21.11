@@ -78,5 +78,6 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add("container.solar_digester", "Solar Digester");
         builder.add("container.solar_concentrator", "Solar Concentrator");
         builder.add("jei.cambium.solar_digesting", "Solar Digesting");
+        builder.add("jei.cambium.solar_concentrating", "Solar Concentrating");
     }
 }

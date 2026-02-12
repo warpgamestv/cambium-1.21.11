@@ -39,6 +39,11 @@ public class ModBlockEntities {
             Identifier.fromNamespaceAndPath("cambium", "gravitropic_node_be"),
             FabricBlockEntityTypeBuilder.create(GravitropicNodeBlockEntity::new, ModBlocks.GRAVITROPIC_NODE).build(null)
     );
+    public static final BlockEntityType<PhloemDuctBlockEntity> PHLOEM_DUCT = Registry.register(
+            BuiltInRegistries.BLOCK_ENTITY_TYPE,
+            Identifier.fromNamespaceAndPath("cambium", "phloem_duct"),
+            FabricBlockEntityTypeBuilder.create(PhloemDuctBlockEntity::new, ModBlocks.PHLOEM_DUCT).build(null)
+    );
 
     public static void registerBlockEntities() {
         Cambium.LOGGER.info("Registering Block Entities for " + Cambium.MOD_ID);

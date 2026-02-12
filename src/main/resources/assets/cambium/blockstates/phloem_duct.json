@@ -1,8 +1,6 @@
 {
   "multipart": [
-    {
-      "apply": { "model": "cambium:block/phloem_duct_core" }
-    },
+    { "apply": { "model": "cambium:block/phloem_duct_core" } },
 
     { "when": { "north": "normal" }, "apply": { "model": "cambium:block/phloem_duct_side" } },
     { "when": { "east": "normal" },  "apply": { "model": "cambium:block/phloem_duct_side", "y": 90 } },
