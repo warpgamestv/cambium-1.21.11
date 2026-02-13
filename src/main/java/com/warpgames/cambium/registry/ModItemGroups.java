@@ -34,6 +34,9 @@ public class ModItemGroups {
                         entries.accept(ModItems.BIOCOMPOSITE_PASTE);
                         entries.accept(ModItems.BIOPOLYMER);
                         entries.accept(ModItems.BIOPOLYMER_CASING);
+                        entries.accept(ModItems.GRAFTING_TOOL);
+                        entries.accept(ModBlocks.GRAVITROPIC_NODE);
+                        entries.accept(ModBlocks.PHLOEM_DUCT);
                     })
                     .build());
 
@@ -42,7 +45,7 @@ public class ModItemGroups {
             BuiltInRegistries.CREATIVE_MODE_TAB,
             Identifier.fromNamespaceAndPath(MOD_ID, "resource_trees_tab"),
             FabricItemGroup.builder()
-                    .icon(() -> new ItemStack(Items.OAK_SAPLING)) //
+                    .icon(() -> new ItemStack(TreeRegistry.EMERALD)) //
                     .title(Component.translatable("itemGroup.cambium_trees"))
                     .displayItems((context, entries) -> {
                         for (ResourceTree tree : TreeRegistry.TREES) {
