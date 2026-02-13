@@ -45,7 +45,7 @@ public class ModItemGroups {
             BuiltInRegistries.CREATIVE_MODE_TAB,
             Identifier.fromNamespaceAndPath(MOD_ID, "resource_trees_tab"),
             FabricItemGroup.builder()
-                    .icon(() -> new ItemStack(TreeRegistry.EMERALD)) //
+                    .icon(() -> new ItemStack(TreeRegistry.EMERALD.getSapling())) //
                     .title(Component.translatable("itemGroup.cambium_trees"))
                     .displayItems((context, entries) -> {
                         for (ResourceTree tree : TreeRegistry.TREES) {
