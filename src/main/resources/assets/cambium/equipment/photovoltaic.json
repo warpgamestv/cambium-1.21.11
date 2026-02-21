@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "cambium:photovoltaic"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "cambium:photovoltaic"
+      }
+    ]
+  }
+}

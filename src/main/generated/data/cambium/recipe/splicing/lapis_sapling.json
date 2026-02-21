@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "#c:gems/lapis",
-  "base": "minecraft:oak_sapling",
-  "result": {
-    "id": "cambium:lapis_sapling"
-  },
-  "template": "cambium:organic_ash"
-}

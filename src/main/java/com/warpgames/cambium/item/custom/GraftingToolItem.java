@@ -1,13 +1,27 @@
 package com.warpgames.cambium.item.custom;
 
+import com.warpgames.cambium.block.MycelialStrandBlock;
+import com.warpgames.cambium.block.StrandConnection;
 import com.warpgames.cambium.block.transport.DuctConnection;
 import com.warpgames.cambium.block.transport.PhloemDuctBlock;
+import com.warpgames.cambium.content.ResourceTree;
+import com.warpgames.cambium.registry.TreeRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 
@@ -22,32 +36,99 @@ public class GraftingToolItem extends Item {
         BlockPos clickedPos = context.getClickedPos();
         BlockState clickedState = level.getBlockState(clickedPos);
         Direction clickedFace = context.getClickedFace();
+        Player player = context.getPlayer();
 
-        // Logic runs on Server Side only
-        if (level.isClientSide()) return InteractionResult.SUCCESS;
+        if (player == null)
+            return InteractionResult.PASS;
 
-        // CASE 1: The player clicked the Duct directly
-        if (clickedState.getBlock() instanceof PhloemDuctBlock) {
-            return toggleConnection(level, clickedPos, clickedState, clickedFace);
+        // --- MODE 1: GRAFTING (Targeting Saplings) ---
+        if (clickedState.is(BlockTags.SAPLINGS)) {
+            ItemStack offhandStack = player.getItemBySlot(EquipmentSlot.OFFHAND);
+
+            // Only try grafting if we are holding an item in the offhand
+            if (!offhandStack.isEmpty()) {
+                // Check every registered tree to see if the offhand item matches its
+                // seed/ingredient
+                for (ResourceTree tree : TreeRegistry.TREES) {
+
+                    // Match Check: Supports both Tags (e.g. c:raw_materials/iron) and Direct Items
+                    // (e.g. Raw Iron)
+                    boolean isMatch = (tree.getIngredientTag() != null && offhandStack.is(tree.getIngredientTag()))
+                            || offhandStack.is(tree.getItem());
+
+                    if (isMatch) {
+                        // SERVER SIDE ONLY (Logic)
+                        if (!level.isClientSide()) {
+
+                            // 1. Consume Cost (Item + Durability)
+                            if (!player.isCreative()) {
+                                offhandStack.shrink(1);
+                                context.getItemInHand().hurtAndBreak(1, player, EquipmentSlot.MAINHAND);
+                            }
+
+                            // 2. Roll for Success (75% Chance)
+                            if (level.random.nextFloat() < 0.75f) {
+                                // SUCCESS: Transform into Resource Sapling
+                                level.setBlock(clickedPos, tree.getSapling().defaultBlockState(), Block.UPDATE_ALL);
+
+                                level.playSound(null, clickedPos, SoundEvents.BONE_MEAL_USE, SoundSource.BLOCKS, 1.0f,
+                                        1.0f);
+                                ((ServerLevel) level).sendParticles(ParticleTypes.HAPPY_VILLAGER,
+                                        clickedPos.getX() + 0.5, clickedPos.getY() + 0.5, clickedPos.getZ() + 0.5,
+                                        10, 0.2, 0.2, 0.2, 0.05);
+                            } else {
+                                // FAILURE: Turns into Dead Bush
+                                level.setBlock(clickedPos, Blocks.DEAD_BUSH.defaultBlockState(), Block.UPDATE_ALL);
+
+                                level.playSound(null, clickedPos, SoundEvents.CROP_BREAK, SoundSource.BLOCKS, 1.0f,
+                                        0.8f);
+                                ((ServerLevel) level).sendParticles(ParticleTypes.SMOKE,
+                                        clickedPos.getX() + 0.5, clickedPos.getY() + 0.5, clickedPos.getZ() + 0.5,
+                                        10, 0.1, 0.1, 0.1, 0.05);
+                            }
+                        }
+                        return InteractionResult.SUCCESS;
+                    }
+                }
+            }
         }
 
-        // CASE 2: The player clicked a Chest/Machine (Targeting the Duct behind it)
-        // We look at the block adjacent to the clicked face
+        // --- MODE 2 & 3: WRENCH (Targeting Ducts or Strands) ---
+
+        // Skip Client Side for wrenching to prevent desync
+        if (level.isClientSide())
+            return InteractionResult.SUCCESS;
+
+        // Case A: Directly clicked a Duct
+        if (clickedState.getBlock() instanceof PhloemDuctBlock) {
+            return toggleDuctConnection(level, clickedPos, clickedState, clickedFace);
+        }
+
+        // Case B: Directly clicked a Strand
+        if (clickedState.getBlock() instanceof MycelialStrandBlock) {
+            return toggleStrandConnection(level, clickedPos, clickedState, clickedFace);
+        }
+
+        // Case C: Clicked a Machine/Container (Toggle the duct or strand behind it)
         BlockPos neighborPos = clickedPos.relative(clickedFace);
         BlockState neighborState = level.getBlockState(neighborPos);
 
         if (neighborState.getBlock() instanceof PhloemDuctBlock) {
-            // We clicked the "North" face of a chest. This means the Duct is to the North.
-            // That Duct connects to the chest via its "South" face.
-            Direction ductFaceToToggle = clickedFace.getOpposite();
-            return toggleConnection(level, neighborPos, neighborState, ductFaceToToggle);
+            // If clicking the NORTH face of a chest, we want to toggle the SOUTH face of
+            // the duct at North position.
+            return toggleDuctConnection(level, neighborPos, neighborState, clickedFace.getOpposite());
+        }
+
+        if (neighborState.getBlock() instanceof MycelialStrandBlock) {
+            return toggleStrandConnection(level, neighborPos, neighborState, clickedFace.getOpposite());
         }
 
         return InteractionResult.PASS;
     }
 
-    private InteractionResult toggleConnection(Level level, BlockPos pos, BlockState state, Direction face) {
-        EnumProperty<DuctConnection> property = getPropertyForFace(face);
+    // --- Helper for Duct Wrench Logic ---
+    private InteractionResult toggleDuctConnection(Level level, BlockPos pos, BlockState state, Direction face) {
+        EnumProperty<DuctConnection> property = getDuctPropertyForFace(face);
         DuctConnection current = state.getValue(property);
 
         // Cycle: NONE -> NORMAL -> EXTRACT -> NONE
@@ -58,10 +139,33 @@ public class GraftingToolItem extends Item {
         };
 
         level.setBlock(pos, state.setValue(property, next), 3);
+        level.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
         return InteractionResult.CONSUME;
     }
 
-    private EnumProperty<DuctConnection> getPropertyForFace(Direction face) {
+    // --- Helper for Strand Wrench Logic ---
+    private InteractionResult toggleStrandConnection(Level level, BlockPos pos, BlockState state, Direction face) {
+        EnumProperty<StrandConnection> property = MycelialStrandBlock.getProperty(face);
+        StrandConnection current = state.getValue(property);
+
+        // Only toggle between CONNECTED and LOCKED — don't create connections from NONE
+        StrandConnection next = switch (current) {
+            case CONNECTED -> StrandConnection.LOCKED;
+            case LOCKED -> StrandConnection.CONNECTED;
+            case NONE -> StrandConnection.NONE; // Can't lock or unlock nothing
+        };
+
+        if (next == current) {
+            // Nothing to toggle (face was NONE)
+            return InteractionResult.PASS;
+        }
+
+        level.setBlock(pos, state.setValue(property, next), 3);
+        level.playSound(null, pos, SoundEvents.COPPER_PLACE, SoundSource.BLOCKS, 0.5f, 1.5f);
+        return InteractionResult.CONSUME;
+    }
+
+    private EnumProperty<DuctConnection> getDuctPropertyForFace(Direction face) {
         return switch (face) {
             case NORTH -> PhloemDuctBlock.NORTH;
             case SOUTH -> PhloemDuctBlock.SOUTH;

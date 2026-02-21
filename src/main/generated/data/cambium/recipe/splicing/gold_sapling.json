@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "#c:raw_materials/gold",
-  "base": "minecraft:oak_sapling",
-  "result": {
-    "id": "cambium:gold_sapling"
-  },
-  "template": "cambium:organic_ash"
-}

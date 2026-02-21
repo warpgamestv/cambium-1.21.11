@@ -10,6 +10,7 @@ import net.minecraft.core.HolderLookup;
 
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("null")
 public class ModEnLangProvider extends FabricLanguageProvider {
 
     public ModEnLangProvider(FabricDataOutput dataOutput, CompletableFuture<HolderLookup.Provider> registryLookup) {
@@ -20,6 +21,7 @@ public class ModEnLangProvider extends FabricLanguageProvider {
     public void generateTranslations(HolderLookup.Provider registryLookup, TranslationBuilder builder) {
         // --- Item Groups ---
         builder.add("itemGroup.cambium", "Cambium");
+        builder.add("itemGroup.cambium_items", "Cambium Items");
         builder.add("itemGroup.cambium_trees", "Cambium Resource Trees");
 
         // --- Blocks (Static) ---
@@ -29,9 +31,9 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.LIVING_LOG, "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK, "Root Block");
         builder.add(ModBlocks.GRAVITROPIC_NODE, "Gravitropic Node");
+        builder.add(ModBlocks.MYCELIAL_NODE, "Mycelial Node");
+        builder.add(ModBlocks.MYCELIAL_STRAND, "Mycelial Strand");
         builder.add(ModBlocks.PHLOEM_DUCT, "Phloem Duct");
-
-
 
         // 2. Register the ITEM Name
         builder.add(ModBlocks.SOLAR_DIGESTER.asItem(), "Solar Digester");
@@ -40,10 +42,9 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModBlocks.LIVING_LOG.asItem(), "Living Log");
         builder.add(ModBlocks.ROOT_BLOCK.asItem(), "Root Block");
         builder.add(ModBlocks.GRAVITROPIC_NODE.asItem(), "Gravitropic Node");
+        builder.add(ModBlocks.MYCELIAL_NODE.asItem(), "Mycelial Node");
+        builder.add(ModBlocks.MYCELIAL_STRAND.asItem(), "Mycelial Strand");
         builder.add(ModBlocks.PHLOEM_DUCT.asItem(), "Phloem Duct");
-
-
-
 
         // --- Items ---
         builder.add(ModItems.SOLAR_LENS, "Solar Lens");
@@ -52,9 +53,10 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         builder.add(ModItems.BIOPOLYMER, "Biopolymer");
         builder.add(ModItems.BIOPOLYMER_CASING, "Biopolymer Casing");
         builder.add(ModItems.GRAFTING_TOOL, "Grafting Tool");
-
-
-
+        builder.add(ModItems.PHOTOVOLTAIC_HELMET, "Photovoltaic Helmet");
+        builder.add(ModItems.PHOTOVOLTAIC_CHESTPLATE, "Photovoltaic Chestplate");
+        builder.add(ModItems.PHOTOVOLTAIC_LEGGINGS, "Photovoltaic Leggings");
+        builder.add(ModItems.PHOTOVOLTAIC_BOOTS, "Photovoltaic Boots");
 
         // --- Dynamic Resource Tree Support ---
         for (ResourceTree tree : TreeRegistry.TREES) {
@@ -77,6 +79,7 @@ public class ModEnLangProvider extends FabricLanguageProvider {
         // --- UI / Messages ---
         builder.add("container.solar_digester", "Solar Digester");
         builder.add("container.solar_concentrator", "Solar Concentrator");
+        builder.add("container.mycelial_node", "Mycelial Network");
         builder.add("jei.cambium.solar_digesting", "Solar Digesting");
         builder.add("jei.cambium.solar_concentrating", "Solar Concentrating");
     }

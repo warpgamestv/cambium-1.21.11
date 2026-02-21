@@ -1,9 +1,0 @@
-{
-  "type": "minecraft:smithing_transform",
-  "addition": "#c:gems/diamond",
-  "base": "minecraft:oak_sapling",
-  "result": {
-    "id": "cambium:diamond_sapling"
-  },
-  "template": "cambium:organic_ash"
-}

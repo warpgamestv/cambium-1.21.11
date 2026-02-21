@@ -7,12 +7,14 @@ import com.warpgames.cambium.registry.ModBlockEntities;
 import com.warpgames.cambium.registry.ModTags;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer; // Import this!
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,13 +32,15 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, Container {
+// Implement WorldlyContainer
+public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, WorldlyContainer {
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(4, ItemStack.EMPTY);
 
     private static final int INPUT_SLOT = 0;
     private static final int OUTPUT_SLOT = 1;
     private static final int BYPRODUCT_SLOT = 2;
+    private static final int LENS_SLOT = 3; // Ensure this matches logic
 
     protected final ContainerData data;
     private int progress = 0;
@@ -65,7 +69,28 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         };
     }
 
-    // --- TICK LOGIC ---
+    // --- AUTOMATION RULES (WorldlyContainer) ---
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        if (side == Direction.DOWN) {
+            return new int[]{OUTPUT_SLOT, BYPRODUCT_SLOT}; // Bottom extracts Products
+        } else {
+            return new int[]{INPUT_SLOT}; // Sides/Top insert Input
+        }
+        // Note: LENS_SLOT (3) is completely hidden from automation
+    }
+
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
+        return slot == INPUT_SLOT; // Only allow insertion into Input
+    }
+
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
+        return slot == OUTPUT_SLOT || slot == BYPRODUCT_SLOT; // Only allow extraction from outputs
+    }
+
+    // --- REST OF THE FILE (Unchanged) ---
     public static void tick(Level level, BlockPos pos, BlockState state, SolarDigesterBlockEntity entity) {
         if (level.isClientSide()) return;
 
@@ -100,14 +125,10 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         }
     }
 
-    private void resetProgress() {
-        this.progress = 0;
-    }
+    private void resetProgress() { this.progress = 0; }
 
-    // --- HELPER: FIND RECIPE ---
     private Optional<RecipeHolder<SolarDigesterRecipe>> getRecipe() {
         if (this.level == null) return Optional.empty();
-
         if (this.level instanceof ServerLevel serverLevel) {
             SingleRecipeInput input = new SingleRecipeInput(this.inventory.get(INPUT_SLOT));
             return serverLevel.recipeAccess().getRecipeFor(ModRecipes.SOLAR_DIGESTER_TYPE, input, this.level);
@@ -115,7 +136,6 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         return Optional.empty();
     }
 
-    // --- HELPER: CHECK IF OUTPUT FITS ---
     private boolean canCraft(SolarDigesterRecipe recipe) {
         ItemStack recipeOutput = recipe.getOutput();
         ItemStack recipeByproduct = recipe.getByproduct();
@@ -123,9 +143,9 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         ItemStack currentByproduct = this.inventory.get(BYPRODUCT_SLOT);
 
         if (recipe.requiresLens()) {
-            ItemStack lensStack = this.getItem(3); // Slot 3 is lens
+            ItemStack lensStack = this.getItem(LENS_SLOT);
             if (lensStack.isEmpty() || !lensStack.is(ModTags.Items.LENS)) {
-                return false; // Stop crafting if lens is missing
+                return false;
             }
         }
 
@@ -163,63 +183,29 @@ public class SolarDigesterBlockEntity extends BlockEntity implements ExtendedScr
         }
     }
 
-    // --- SCREEN FACTORY ---
-    @Override
-    public BlockPos getScreenOpeningData(ServerPlayer player) {
-        return this.getBlockPos();
-    }
-
-    @Override
-    public Component getDisplayName() {
-        return Component.literal("Solar Digester");
-    }
-
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
+    @Override public BlockPos getScreenOpeningData(ServerPlayer player) { return this.getBlockPos(); }
+    @Override public Component getDisplayName() { return Component.literal("Solar Digester"); }
+    @Nullable @Override public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
         return new SolarDigesterMenu(syncId, playerInventory, ContainerLevelAccess.create(level, this.getBlockPos()), this.data, this);
     }
-
-    // --- CONTAINER METHODS ---
-    @Override
-    public int getContainerSize() { return inventory.size(); }
-    @Override
-    public boolean isEmpty() { for (ItemStack stack : inventory) if (!stack.isEmpty()) return false; return true; }
-    @Override
-    public ItemStack getItem(int slot) { return inventory.get(slot); }
-    @Override
-    public ItemStack removeItem(int slot, int amount) { ItemStack r = ContainerHelper.removeItem(inventory, slot, amount); if (!r.isEmpty()) setChanged(); return r; }
-    @Override
-    public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(inventory, slot); }
-    @Override
-    public void setItem(int slot, ItemStack stack) { inventory.set(slot, stack); if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize()); setChanged(); }
-    @Override
-    public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
-    @Override
-    public void clearContent() { inventory.clear(); }
-
-    // --- SAVING AND LOADING (FIXED FOR 1.21.4) ---
-
-    @Override
-    protected void saveAdditional(ValueOutput output) {
+    @Override public int getContainerSize() { return inventory.size(); }
+    @Override public boolean isEmpty() { for (ItemStack stack : inventory) if (!stack.isEmpty()) return false; return true; }
+    @Override public ItemStack getItem(int slot) { return inventory.get(slot); }
+    @Override public ItemStack removeItem(int slot, int amount) { ItemStack r = ContainerHelper.removeItem(inventory, slot, amount); if (!r.isEmpty()) setChanged(); return r; }
+    @Override public ItemStack removeItemNoUpdate(int slot) { return ContainerHelper.takeItem(inventory, slot); }
+    @Override public void setItem(int slot, ItemStack stack) { inventory.set(slot, stack); if (stack.getCount() > getMaxStackSize()) stack.setCount(getMaxStackSize()); setChanged(); }
+    @Override public boolean stillValid(Player player) { return Container.stillValidBlockEntity(this, player); }
+    @Override public void clearContent() { inventory.clear(); }
+    @Override protected void saveAdditional(ValueOutput output) {
         super.saveAdditional(output);
         output.putInt("solar_digester.progress", progress);
         output.putInt("solar_digester.max_progress", maxProgress);
-
-        // FIX: Direct save to ValueOutput (No CompoundTag wrapper needed)
-        // Note: Use 'true' if your version requires a boolean, or omit if it only takes (output, inventory)
         ContainerHelper.saveAllItems(output, this.inventory, true);
     }
-
-    @Override
-    protected void loadAdditional(ValueInput input) {
+    @Override protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-
-        // FIX: Handle Optional Return Types
         this.progress = input.getInt("solar_digester.progress").orElse(0);
         this.maxProgress = input.getInt("solar_digester.max_progress").orElse(100);
-
-        // FIX: Direct load from ValueInput
         this.inventory.clear();
         ContainerHelper.loadAllItems(input, this.inventory);
     }

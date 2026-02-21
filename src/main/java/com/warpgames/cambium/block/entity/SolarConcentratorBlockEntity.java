@@ -5,12 +5,14 @@ import com.warpgames.cambium.registry.ModItems;
 import com.warpgames.cambium.menu.SolarConcentratorMenu;
 import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.ContainerHelper;
+import net.minecraft.world.WorldlyContainer; // Import this!
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -30,7 +32,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class SolarConcentratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, Container {
+// Implement WorldlyContainer
+public class SolarConcentratorBlockEntity extends BlockEntity implements ExtendedScreenHandlerFactory<BlockPos>, WorldlyContainer {
 
     private final NonNullList<ItemStack> inventory = NonNullList.withSize(3, ItemStack.EMPTY);
     private static final int INPUT_SLOT = 0;
@@ -65,7 +68,31 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
         };
     }
 
-    // --- SCREEN FACTORY IMPLEMENTATION ---
+    // --- AUTOMATION RULES (WorldlyContainer) ---
+    // 1. What slots can be seen from each side?
+    @Override
+    public int[] getSlotsForFace(Direction side) {
+        if (side == Direction.DOWN) {
+            return new int[]{OUTPUT_SLOT}; // Bottom extracts Output
+        } else {
+            return new int[]{INPUT_SLOT};  // Sides/Top insert Input
+        }
+        // Note: LENS_SLOT is never returned, so pipes cannot touch it.
+    }
+
+    // 2. Can we insert this item here?
+    @Override
+    public boolean canPlaceItemThroughFace(int slot, ItemStack stack, @Nullable Direction dir) {
+        return slot == INPUT_SLOT; // Only allow insertion into Input
+    }
+
+    // 3. Can we extract this item from here?
+    @Override
+    public boolean canTakeItemThroughFace(int slot, ItemStack stack, Direction dir) {
+        return slot == OUTPUT_SLOT; // Only allow extraction from Output
+    }
+
+    // --- REST OF THE FILE (Unchanged) ---
     @Override
     public BlockPos getScreenOpeningData(ServerPlayer player) {
         return this.getBlockPos();
@@ -79,11 +106,9 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int syncId, Inventory playerInventory, Player player) {
-        // Pass the ContainerLevelAccess here so the Menu can verify the block location
         return new SolarConcentratorMenu(syncId, playerInventory, ContainerLevelAccess.create(level, this.getBlockPos()), this.data, this);
     }
 
-    // --- LOGIC (Kept same as before) ---
     public static void tick(Level level, BlockPos pos, BlockState state, SolarConcentratorBlockEntity entity) {
         if (level.isClientSide()) return;
 
@@ -105,17 +130,14 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
         }
     }
 
-    // ... (Include craftItem, hasRecipe, and resetProgress logic from previous draft here) ...
     private static void craftItem(SolarConcentratorBlockEntity entity) {
         Level level = entity.level;
-
         if (!(level instanceof ServerLevel serverLevel)) return;
 
         SingleRecipeInput input = new SingleRecipeInput(entity.getItem(INPUT_SLOT));
         Optional<RecipeHolder<SmeltingRecipe>> recipe = serverLevel.recipeAccess()
                 .getRecipeFor(RecipeType.SMELTING, input, level);
         if (recipe.isPresent()) {
-            // 3. Use .value() to unwrap the RecipeHolder
             ItemStack result = recipe.get().value().assemble(input, level.registryAccess());
             ItemStack outputStack = entity.getItem(OUTPUT_SLOT);
             if (outputStack.isEmpty()) {
@@ -130,11 +152,9 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
 
     private static boolean hasRecipe(SolarConcentratorBlockEntity entity) {
         Level level = entity.level;
-
         if (!(level instanceof ServerLevel serverLevel)) return false;
 
         SingleRecipeInput input = new SingleRecipeInput(entity.getItem(INPUT_SLOT));
-
         Optional<RecipeHolder<SmeltingRecipe>> recipe = serverLevel.recipeAccess()
                 .getRecipeFor(RecipeType.SMELTING, input, level);
 
@@ -150,7 +170,6 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
 
     private void resetProgress() { this.progress = 0; }
 
-    // --- CONTAINER & SAVING ---
     @Override public int getContainerSize() { return inventory.size(); }
     @Override public boolean isEmpty() { return inventory.stream().allMatch(ItemStack::isEmpty); }
     @Override public ItemStack getItem(int slot) { return inventory.get(slot); }
@@ -165,14 +184,12 @@ public class SolarConcentratorBlockEntity extends BlockEntity implements Extende
         super.saveAdditional(output);
         output.putInt("solar_concentrator.progress", progress);
         output.putInt("solar_concentrator.max_progress", maxProgress);
-
         ContainerHelper.saveAllItems(output, this.inventory, true);
     }
 
     @Override
     protected void loadAdditional(ValueInput input) {
         super.loadAdditional(input);
-
         this.progress = input.getInt("solar_concentrator.progress").orElse(0);
         this.maxProgress = input.getInt("solar_concentrator.max_progress").orElse(100);
         this.inventory.clear();

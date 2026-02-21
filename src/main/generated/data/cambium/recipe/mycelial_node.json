@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "C": "minecraft:chest",
+    "M": "cambium:mineral_soil",
+    "S": "cambium:mycelial_strand"
+  },
+  "pattern": [
+    "SMS",
+    "SCS",
+    "SMS"
+  ],
+  "result": {
+    "count": 1,
+    "id": "cambium:mycelial_node"
+  }
+}
